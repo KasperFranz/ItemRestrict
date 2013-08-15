@@ -18,7 +18,6 @@
 
 package me.ryanhamshire.TekkitCustomizer;
 
-public enum ActionType
-{
+public enum ActionType {
 	Usage, Ownership, Placement, Crafting
 }

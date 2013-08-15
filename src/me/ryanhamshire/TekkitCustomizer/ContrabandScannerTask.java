@@ -37,40 +37,34 @@ class ContrabandScannerTask implements Runnable
 	private int nextChunkPercentile = 0;
 	private int nextPlayerPercentile = 0;
 	
-	@Override
 	public void run()
 	{
-		if(TekkitCustomizer.instance.config_worldBanned.size() > 0)
+		if( TekkitCustomizer.instance.config_worldBanned.size() > 0 )
 		{
 			ArrayList<World> worlds = TekkitCustomizer.instance.config_enforcementWorlds;
-			for(int i = 0; i < worlds.size(); i++)
-			{
-				World world = worlds.get(i);
-				Chunk [] chunks = world.getLoadedChunks();
+			for( int i = 0; i < worlds.size(); i++ ) {
+				World world = worlds.get( i );
+				Chunk[] chunks = world.getLoadedChunks();
 				
 				//scan 5% of chunks each pass
-				int firstChunk = (int)(chunks.length * (nextChunkPercentile / 100f));
-				int lastChunk = (int)(chunks.length * ((nextChunkPercentile + 5) / 100f));
+				int firstChunk = (int) (chunks.length * ( nextChunkPercentile / 100f ) );
+				int lastChunk = (int) (chunks.length * ( ( nextChunkPercentile + 5 ) / 100f ) );
 				
 				//for each chunk to be scanned
-				for(int j = firstChunk; j < lastChunk; j++)
-				{
+				for( int j = firstChunk; j < lastChunk; j++ ) {
 					Chunk chunk = chunks[j];
 					
 					//scan all its blocks for removable blocks
-					for(int x = 0; x < 16; x++)
-					{
-						for(int y = 0; y < chunk.getWorld().getMaxHeight(); y++)
-						{
-							for(int z = 0; z < 16; z++)
+					for( int x = 0; x < 16; x++ ) {
+						for( int y = 0; y < chunk.getWorld().getMaxHeight(); y++ ) {
+							for( int z = 0; z < 16; z++ )
 							{
-								Block block = chunk.getBlock(x, y, z);
-								MaterialInfo materialInfo = new MaterialInfo(block.getTypeId(), block.getData(), null, null);
-								MaterialInfo bannedInfo = TekkitCustomizer.instance.config_worldBanned.Contains(materialInfo);
-								if(bannedInfo != null)
-								{
-									block.setType(Material.AIR);
-									TekkitCustomizer.AddLogEntry("Removed " + bannedInfo.toString() + " @ " + TekkitCustomizer.getFriendlyLocationString(block.getLocation()));
+								Block block = chunk.getBlock( x, y, z );
+								MaterialInfo materialInfo = new MaterialInfo( block.getTypeId(), block.getData(), null, null );
+								MaterialInfo bannedInfo = TekkitCustomizer.instance.config_worldBanned.Contains( materialInfo );
+								if( bannedInfo != null ) {
+									block.setType( Material.AIR );
+									TekkitCustomizer.AddLogEntry( "Removed " + bannedInfo.toString() + " @ " + TekkitCustomizer.getFriendlyLocationString( block.getLocation() ) );
 								}
 							}
 						}
@@ -79,63 +73,57 @@ class ContrabandScannerTask implements Runnable
 			}
 			
 			nextChunkPercentile += 5;
-			if(nextChunkPercentile >= 100) nextChunkPercentile = 0;			
+			if( nextChunkPercentile >= 100 ) nextChunkPercentile = 0;			
 		}
 		
 		//check player inventories
-		if(TekkitCustomizer.instance.config_ownershipBanned.size() > 0)
-		{
+		if( TekkitCustomizer.instance.config_ownershipBanned.size() > 0 ) {
 			Server server = TekkitCustomizer.instance.getServer();
 			Player [] players = server.getOnlinePlayers();
-			if(players.length == 0) return;
+			if( players.length == 0 ) return;
 			
 			//scan 5% of players each pass
-			int firstPlayer = (int)(players.length * (nextPlayerPercentile / 100f));
-			int lastPlayer = (int)(players.length * ((nextPlayerPercentile + 5) / 100f));
+			int firstPlayer = (int) ( players.length * ( nextPlayerPercentile / 100f ) );
+			int lastPlayer = (int) ( players.length * ( ( nextPlayerPercentile + 5) / 100f ) );
 			
-			if(lastPlayer == firstPlayer) lastPlayer = players.length;
+			if( lastPlayer == firstPlayer ) lastPlayer = players.length;
 			
 			//for each player to be scanned
-			for(int j = firstPlayer; j < lastPlayer; j++)
-			{
+			for( int j = firstPlayer; j < lastPlayer; j++ ) {
 				Player player = players[j];
 				
 				//scan all this player's inventory for contraband items
 				PlayerInventory inventory = player.getInventory();
-				for(int i = 0; i < inventory.getSize(); i++)
-				{
-					ItemStack itemStack = inventory.getItem(i);
-					if(itemStack == null) continue;
+				for( int i = 0; i < inventory.getSize(); i++ ) {
+					ItemStack itemStack = inventory.getItem( i );
+					if( itemStack == null ) continue;
 					
-					MaterialInfo bannedInfo = TekkitCustomizer.instance.isBanned(ActionType.Ownership, player, itemStack.getTypeId(), itemStack.getData().getData(), player.getLocation());
-					if(bannedInfo != null)
-					{
-						inventory.setItem(i, new ItemStack(Material.AIR));
-						TekkitCustomizer.AddLogEntry("Confiscated " + bannedInfo.toString() + " from " + player.getName() + ".");
+					MaterialInfo bannedInfo = TekkitCustomizer.instance.isBanned( ActionType.Ownership, player, itemStack.getTypeId(), itemStack.getData().getData(), player.getLocation() );
+					if( bannedInfo != null ) {
+						inventory.setItem( i, new ItemStack( Material.AIR ) );
+						TekkitCustomizer.AddLogEntry( "Confiscated " + bannedInfo.toString() + " from " + player.getName() + "." );
 					}
 				}
 				
 				ItemStack [] armor = inventory.getArmorContents();
-				for(int i = 0; i < armor.length; i++)
-				{
+				for( int i = 0; i < armor.length; i++ ) {
 					ItemStack itemStack = armor[i];
-					if(itemStack == null) continue;
+					if( itemStack == null ) continue;
 					
-					MaterialInfo bannedInfo = TekkitCustomizer.instance.isBanned(ActionType.Ownership, player, itemStack.getTypeId(), itemStack.getData().getData(), player.getLocation());
-					if(bannedInfo != null)
-					{
-						itemStack.setType(Material.AIR);
-						itemStack.setAmount(0);
+					MaterialInfo bannedInfo = TekkitCustomizer.instance.isBanned( ActionType.Ownership, player, itemStack.getTypeId(), itemStack.getData().getData(), player.getLocation() );
+					if( bannedInfo != null ) {
+						itemStack.setType( Material.AIR );
+						itemStack.setAmount( 0 );
 						armor[i] = itemStack;
-						TekkitCustomizer.AddLogEntry("Confiscated " + bannedInfo.toString() + " from " + player.getName() + ".");
+						TekkitCustomizer.AddLogEntry( "Confiscated " + bannedInfo.toString() + " from " + player.getName() + "." );
 					}
 				}
 				
-				inventory.setArmorContents(armor);
+				inventory.setArmorContents( armor );
 			}
 		}
 		
 		nextPlayerPercentile += 5;
-		if(nextPlayerPercentile >= 100) nextPlayerPercentile = 0;	
+		if( nextPlayerPercentile >= 100 ) nextPlayerPercentile = 0;	
 	}	
 }

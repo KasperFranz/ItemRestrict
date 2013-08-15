@@ -26,36 +26,31 @@ import org.bukkit.inventory.PlayerInventory;
 //helps rapidly scan items as they are held in hand
 //when item held in hand, task is scheduled with slot number
 //after short delay, if still on equipping same slot number, this task checks to see if the equipped item is contraband
-class InHandContrabandScanTask implements Runnable 
-{
+class InHandContrabandScanTask implements Runnable {
 	Player player;
 	int slotNumber;
 	
-	public InHandContrabandScanTask(Player player, int slotNumber)
-	{
+	public InHandContrabandScanTask( Player player, int slotNumber ) {
 		this.player = player;
 		this.slotNumber = slotNumber;
 	}
 	
-	@Override
-	public void run()
-	{
+	public void run() {
 		//if he logged out, don't do anything
-		if(!player.isOnline()) return;
+		if( !player.isOnline() ) return;
 		
 		//if he's not holding the same item anymore, do nothing
 		PlayerInventory inventory = player.getInventory();
-		if(inventory.getHeldItemSlot() != slotNumber) return;
+		if( inventory.getHeldItemSlot() != slotNumber ) return;
 		
 		ItemStack inHandStack = player.getItemInHand();
-		if(inHandStack == null) return;
+		if( inHandStack == null ) return;
 		
-		MaterialInfo bannedInfo = TekkitCustomizer.instance.isBanned(ActionType.Ownership, player, inHandStack.getTypeId(), inHandStack.getData().getData(), player.getLocation());
-		if(bannedInfo != null)
-		{
-			inventory.setItem(slotNumber, new ItemStack(Material.AIR));
-			TekkitCustomizer.AddLogEntry("Confiscated " + bannedInfo.toString() + " from " + player.getName() + ".");
-			player.sendMessage("Banned item confiscated.  Reason: " + bannedInfo.reason);
+		MaterialInfo bannedInfo = TekkitCustomizer.instance.isBanned( ActionType.Ownership, player, inHandStack.getTypeId(), inHandStack.getData().getData(), player.getLocation() );
+		if( bannedInfo != null ) {
+			inventory.setItem( slotNumber, new ItemStack( Material.AIR ) );
+			TekkitCustomizer.AddLogEntry( "Confiscated " + bannedInfo.toString() + " from " + player.getName() + "." );
+			player.sendMessage( "Banned item confiscated.  Reason: " + bannedInfo.reason );
 		}		
 	}
 }

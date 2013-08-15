@@ -36,73 +36,62 @@ import org.bukkit.inventory.ItemStack;
 public class EntityEventHandler implements Listener
 {
 	//when an entity (includes both dynamite and creepers) explodes...
-	@EventHandler(ignoreCancelled = true)
-	public void onEntityExplode(EntityExplodeEvent explodeEvent)
+	@EventHandler( ignoreCancelled = true )
+	public void onEntityExplode( EntityExplodeEvent explodeEvent )
 	{		
-		if(!TekkitCustomizer.instance.config_enforcementWorlds.contains(explodeEvent.getLocation().getWorld())) return;
+		if( !TekkitCustomizer.instance.config_enforcementWorlds.contains( explodeEvent.getLocation().getWorld() ) ) return;
 		
-		if(TekkitCustomizer.instance.config_protectSurfaceFromExplosions)
-		{
+		if( TekkitCustomizer.instance.config_protectSurfaceFromExplosions ) {
 			List<Block> blocks = explodeEvent.blockList();
-			for(int i = 0; i < blocks.size(); i++)
-			{
-				Block block = blocks.get(i);
+			for( int i = 0; i < blocks.size(); i++ ) {
+				Block block = blocks.get( i );
 				if(	block.getY() >= explodeEvent.getLocation().getWorld().getSeaLevel() - 5 &&
-					block.getTypeId() != 161 && block.getTypeId() != 246)
-				{
+					block.getTypeId() != 161 && block.getTypeId() != 246) {
 					blocks.remove(i--); 
 				}
 			}
 		}
 	}
 	
-	@EventHandler(ignoreCancelled = true)
-	public void onEntityDamage (EntityDamageEvent event)
+	@EventHandler( ignoreCancelled = true )
+	public void onEntityDamage ( EntityDamageEvent event )
 	{
-		if(!(event instanceof EntityDamageByEntityEvent)) return;
+		if( !( event instanceof EntityDamageByEntityEvent ) ) return;
 		
 		EntityDamageByEntityEvent subEvent = (EntityDamageByEntityEvent) event;
 		
 		Player player = null;
 		Entity damageSource = subEvent.getDamager();
-		if(damageSource instanceof Player)
-		{
-			player = (Player)damageSource;
+		if( damageSource instanceof Player ) {
+			player = (Player) damageSource;
 		}
-		else if(damageSource instanceof Arrow)
-		{
+		else if( damageSource instanceof Arrow ) {
 			Arrow arrow = (Arrow)damageSource;
-			if(arrow.getShooter() instanceof Player)
-			{
+			if(arrow.getShooter() instanceof Player ) {
 				player = (Player)arrow.getShooter();
 			}
 		}
-		else if(damageSource instanceof ThrownPotion)
-		{
-			ThrownPotion potion = (ThrownPotion)damageSource;
-			if(potion.getShooter() instanceof Player)
-			{
+		else if(damageSource instanceof ThrownPotion ) {
+			ThrownPotion potion = (ThrownPotion) damageSource;
+			if(potion.getShooter() instanceof Player) {
 				player = (Player)potion.getShooter();
 			}
 		}
 		
-		if(player != null)
-		{
-			MaterialInfo bannedInfo = TekkitCustomizer.instance.isBanned(ActionType.Ownership, player, player.getItemInHand().getTypeId(), player.getItemInHand().getData().getData(), player.getLocation());
-			if(bannedInfo != null)
-			{
-				event.setCancelled(true);
-				player.getInventory().setItemInHand(new ItemStack(Material.AIR));
-				TekkitCustomizer.AddLogEntry("Confiscated " + bannedInfo.toString() + " from " + player.getName() + ".");
-				player.sendMessage("Sorry, that item is banned.  Reason: " + bannedInfo.reason);
+		if(player != null) {
+			MaterialInfo bannedInfo = TekkitCustomizer.instance.isBanned( ActionType.Ownership, player, player.getItemInHand().getTypeId(), player.getItemInHand().getData().getData(), player.getLocation() );
+			if( bannedInfo != null ) {
+				event.setCancelled( true );
+				player.getInventory().setItemInHand( new ItemStack( Material.AIR ) );
+				TekkitCustomizer.AddLogEntry( "Confiscated " + bannedInfo.toString() + " from " + player.getName() + "." );
+				player.sendMessage( "Sorry, that item is banned.  Reason: " + bannedInfo.reason );
 				return;
 			}
 			
-			bannedInfo = TekkitCustomizer.instance.isBanned(ActionType.Usage, player, player.getItemInHand().getTypeId(), player.getItemInHand().getData().getData(), player.getLocation());
-			if(bannedInfo != null)
-			{
-				event.setCancelled(true);
-				player.sendMessage("Sorry, usage of that item is banned.  Reason: " + bannedInfo.reason);				
+			bannedInfo = TekkitCustomizer.instance.isBanned( ActionType.Usage, player, player.getItemInHand().getTypeId(), player.getItemInHand().getData().getData(), player.getLocation() );
+			if( bannedInfo != null ) {
+				event.setCancelled( true );
+				player.sendMessage( "Sorry, usage of that item is banned.  Reason: " + bannedInfo.reason );				
 			}
 		}
 	}

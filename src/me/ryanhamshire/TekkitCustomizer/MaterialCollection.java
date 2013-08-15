@@ -21,29 +21,23 @@ package me.ryanhamshire.TekkitCustomizer;
 import java.util.ArrayList;
 
 //ordered list of material info objects, for fast searching
-public class MaterialCollection
-{
+public class MaterialCollection {
 	ArrayList<MaterialInfo> materials = new ArrayList<MaterialInfo>();
 	
-	void Add(MaterialInfo material)
-	{
+	void Add( MaterialInfo material ) {
 		int i;
-		for(i = 0; i < this.materials.size() && this.materials.get(i).typeID <= material.typeID; i++);
+		for( i = 0; i < this.materials.size() && this.materials.get( i ).typeID <= material.typeID; i++ );
 		this.materials.add(i, material);
 	}
 	
 	//returns a MaterialInfo complete with the friendly material name from the config file
-	MaterialInfo Contains(MaterialInfo material)
-	{
-		for(int i = 0; i < this.materials.size(); i++)
-		{
-			MaterialInfo thisMaterial = this.materials.get(i);
-			if(material.typeID == thisMaterial.typeID && (thisMaterial.allDataValues || material.data == thisMaterial.data))
-			{
+	MaterialInfo Contains(MaterialInfo material) {
+		for( int i = 0; i < this.materials.size(); i++ ) {
+			MaterialInfo thisMaterial = this.materials.get( i );
+			if( material.typeID == thisMaterial.typeID && ( thisMaterial.allDataValues || material.data == thisMaterial.data ) ) {
 				return thisMaterial;
 			}
-			else if(thisMaterial.typeID > material.typeID)
-			{
+			else if( thisMaterial.typeID > material.typeID ) {
 				return null;				
 			}
 		}
@@ -52,24 +46,20 @@ public class MaterialCollection
 	}
 	
 	@Override
-	public String toString()
-	{
+	public String toString() {
 		StringBuilder stringBuilder = new StringBuilder();
-		for(int i = 0; i < this.materials.size(); i++)
-		{
-			stringBuilder.append(this.materials.get(i).toString() + " ");
+		for( int i = 0; i < this.materials.size(); i++ ) {
+			stringBuilder.append( this.materials.get(i).toString() + " " );
 		}
 		
 		return stringBuilder.toString();
 	}
 	
-	public int size()
-	{
+	public int size() {
 		return this.materials.size();
 	}
 
-	public void clear() 
-	{
+	public void clear() {
 		this.materials.clear();
 	}
 }

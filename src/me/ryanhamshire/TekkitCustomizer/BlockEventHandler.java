@@ -25,23 +25,19 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockPlaceEvent;
 
-public class BlockEventHandler implements Listener 
-{
-	@EventHandler(ignoreCancelled = true, priority = EventPriority.LOWEST)
-	public void onBlockPlace(BlockPlaceEvent placeEvent)
-	{
+public class BlockEventHandler implements Listener {
+	@EventHandler( ignoreCancelled = true, priority = EventPriority.LOWEST )
+	public void onBlockPlace( BlockPlaceEvent placeEvent ) {
 		Player player = placeEvent.getPlayer();
 		Block block = placeEvent.getBlock();
 		
-		MaterialInfo bannedInfo = TekkitCustomizer.instance.isBanned(ActionType.Ownership, player, block.getTypeId(), block.getData(), block.getLocation());
-		if(bannedInfo == null)
-		{
-			bannedInfo = TekkitCustomizer.instance.isBanned(ActionType.Placement, player, block.getTypeId(), block.getData(), block.getLocation());
+		MaterialInfo bannedInfo = TekkitCustomizer.instance.isBanned( ActionType.Ownership, player, block.getTypeId(), block.getData(), block.getLocation() );
+		if( bannedInfo == null ) {
+			bannedInfo = TekkitCustomizer.instance.isBanned( ActionType.Placement, player, block.getTypeId(), block.getData(), block.getLocation() );
 		}
-		if(bannedInfo != null)
-		{
-			placeEvent.setCancelled(true);
-			player.sendMessage("Sorry, that block is banned.  Reason: " + bannedInfo.reason);
+		if( bannedInfo != null ) {
+			placeEvent.setCancelled( true );
+			player.sendMessage( "Sorry, that block is banned.  Reason: " + bannedInfo.reason );
 		}
 	}	
 }
