@@ -43,9 +43,8 @@ public class PlayerEventHandler implements Listener {
 			ItemStack item = inventory.getItem( i );
 			if( item == null ) continue;
 			
-			if( TekkitCustomizer.instance.isBanned(ActionType.Ownership, player, item.getTypeId(), item.getData().getData(), player.getLocation()) != null ) {
+			if( TekkitCustomizer.instance.isBanned(ActionType.Ownership, player, item.getTypeId(), item.getData().getData(), player.getLocation()) != null )
 				inventory.setItem( i, new ItemStack(Material.AIR));
-			}
 		}
 	}
 	
