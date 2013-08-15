@@ -16,7 +16,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package me.ryanhamshire.TekkitCustomizer;
+package info.terrismc.TekkitCustomizer;
 
 //represents a material or collection of materials
 public class MaterialInfo {

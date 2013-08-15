@@ -16,7 +16,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package me.ryanhamshire.TekkitCustomizer;
+package info.terrismc.TekkitCustomizer;
 
 import java.util.List;
 
