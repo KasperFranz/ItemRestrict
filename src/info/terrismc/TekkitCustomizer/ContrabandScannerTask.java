@@ -46,22 +46,26 @@ class ContrabandScannerTask implements Runnable
 				World world = worlds.get( i );
 				Chunk[] chunks = world.getLoadedChunks();
 				
-				//scan 5% of chunks each pass
+				// Scan 5% of chunks each pass
 				int firstChunk = (int) (chunks.length * ( nextChunkPercentile / 100f ) );
 				int lastChunk = (int) (chunks.length * ( ( nextChunkPercentile + 5 ) / 100f ) );
 				
-				//for each chunk to be scanned
+				// For each chunk to be scanned
 				for( int j = firstChunk; j < lastChunk; j++ ) {
 					Chunk chunk = chunks[j];
 					
 					//scan all its blocks for removable blocks
 					for( int x = 0; x < 16; x++ ) {
 						for( int y = 0; y < chunk.getWorld().getMaxHeight(); y++ ) {
-							for( int z = 0; z < 16; z++ )
-							{
+							for( int z = 0; z < 16; z++ ) {
+								// Get block data
 								Block block = chunk.getBlock( x, y, z );
 								MaterialInfo materialInfo = new MaterialInfo( block.getTypeId(), block.getData(), null, null );
+								
+								// Check if banned item
 								MaterialInfo bannedInfo = TekkitCustomizer.instance.config_worldBanned.Contains( materialInfo );
+								
+								// Remove and log
 								if( bannedInfo != null ) {
 									block.setType( Material.AIR );
 									TekkitCustomizer.AddLogEntry( "Removed " + bannedInfo.toString() + " @ " + TekkitCustomizer.getFriendlyLocationString( block.getLocation() ) );
@@ -76,41 +80,50 @@ class ContrabandScannerTask implements Runnable
 			if( nextChunkPercentile >= 100 ) nextChunkPercentile = 0;			
 		}
 		
-		//check player inventories
+		// Check player invs
 		if( TekkitCustomizer.instance.config_ownershipBanned.size() > 0 ) {
 			Server server = TekkitCustomizer.instance.getServer();
 			Player [] players = server.getOnlinePlayers();
 			if( players.length == 0 ) return;
 			
-			//scan 5% of players each pass
+			// Scan 5% of players each pass
 			int firstPlayer = (int) ( players.length * ( nextPlayerPercentile / 100f ) );
 			int lastPlayer = (int) ( players.length * ( ( nextPlayerPercentile + 5) / 100f ) );
 			
 			if( lastPlayer == firstPlayer ) lastPlayer = players.length;
 			
-			//for each player to be scanned
+			// For each player to be scanned
 			for( int j = firstPlayer; j < lastPlayer; j++ ) {
 				Player player = players[j];
 				
-				//scan all this player's inventory for contraband items
+				// Scan inventory for banned items
 				PlayerInventory inventory = player.getInventory();
 				for( int i = 0; i < inventory.getSize(); i++ ) {
+					// Get item data
 					ItemStack itemStack = inventory.getItem( i );
 					if( itemStack == null ) continue;
 					
+					// Check if banned
 					MaterialInfo bannedInfo = TekkitCustomizer.instance.isBanned( ActionType.Ownership, player, itemStack.getTypeId(), itemStack.getData().getData(), player.getLocation() );
+					
+					// Remove and log
 					if( bannedInfo != null ) {
 						inventory.setItem( i, new ItemStack( Material.AIR ) );
 						TekkitCustomizer.AddLogEntry( "Confiscated " + bannedInfo.toString() + " from " + player.getName() + "." );
 					}
 				}
 				
+				// Scan armour for banned items
 				ItemStack [] armor = inventory.getArmorContents();
 				for( int i = 0; i < armor.length; i++ ) {
+					// Get item data
 					ItemStack itemStack = armor[i];
 					if( itemStack == null ) continue;
-					
+
+					// Check if banned
 					MaterialInfo bannedInfo = TekkitCustomizer.instance.isBanned( ActionType.Ownership, player, itemStack.getTypeId(), itemStack.getData().getData(), player.getLocation() );
+					
+					// Remove and log
 					if( bannedInfo != null ) {
 						itemStack.setType( Material.AIR );
 						itemStack.setAmount( 0 );
@@ -123,6 +136,7 @@ class ContrabandScannerTask implements Runnable
 			}
 		}
 		
+		// Add to counter
 		nextPlayerPercentile += 5;
 		if( nextPlayerPercentile >= 100 ) nextPlayerPercentile = 0;	
 	}	

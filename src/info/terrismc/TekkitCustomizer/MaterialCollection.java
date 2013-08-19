@@ -20,17 +20,18 @@ package info.terrismc.TekkitCustomizer;
 
 import java.util.ArrayList;
 
-//ordered list of material info objects, for fast searching
+// Ordered list of material info objects for fast searching
 public class MaterialCollection {
 	ArrayList<MaterialInfo> materials = new ArrayList<MaterialInfo>();
 	
+	// Add new material
 	void Add( MaterialInfo material ) {
 		int i;
 		for( i = 0; i < this.materials.size() && this.materials.get( i ).typeID <= material.typeID; i++ );
 		this.materials.add(i, material);
 	}
 	
-	//returns a MaterialInfo complete with the friendly material name from the config file
+	// Constructor returns a MaterialInfo complete with the friendly material name from the config
 	MaterialInfo Contains(MaterialInfo material) {
 		for( int i = 0; i < this.materials.size(); i++ ) {
 			MaterialInfo thisMaterial = this.materials.get( i );
@@ -45,6 +46,7 @@ public class MaterialCollection {
 		return null;
 	}
 	
+	// Get te string
 	@Override
 	public String toString() {
 		StringBuilder stringBuilder = new StringBuilder();
@@ -55,10 +57,12 @@ public class MaterialCollection {
 		return stringBuilder.toString();
 	}
 	
+	// Material size
 	public int size() {
 		return this.materials.size();
 	}
-
+	
+	// Clear material
 	public void clear() {
 		this.materials.clear();
 	}

@@ -31,10 +31,14 @@ public class BlockEventHandler implements Listener {
 		Player player = placeEvent.getPlayer();
 		Block block = placeEvent.getBlock();
 		
+		// Get banned values
 		MaterialInfo bannedInfo = TekkitCustomizer.instance.isBanned( ActionType.Ownership, player, block.getTypeId(), block.getData(), block.getLocation() );
-		if( bannedInfo == null ) {
+		
+		// Check if banned
+		if( bannedInfo == null )
 			bannedInfo = TekkitCustomizer.instance.isBanned( ActionType.Placement, player, block.getTypeId(), block.getData(), block.getLocation() );
-		}
+		
+		// Cancel event if banned
 		if( bannedInfo != null ) {
 			placeEvent.setCancelled( true );
 			player.sendMessage( "Sorry, that block is banned.  Reason: " + bannedInfo.reason );

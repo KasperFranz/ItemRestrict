@@ -33,7 +33,7 @@ import org.bukkit.inventory.PlayerInventory;
 
 public class PlayerEventHandler implements Listener {
 	
-	// when a player successfully joins the server...
+	// When a player joins
 	@EventHandler( ignoreCancelled = true )
 	public void onPlayerJoin(PlayerJoinEvent event) {
 		Player player = event.getPlayer();
@@ -49,7 +49,7 @@ public class PlayerEventHandler implements Listener {
 		}
 	}
 	
-	//when something is crafted (may not be a player crafting)
+	// When an item is crafted
 	@EventHandler( priority = EventPriority.LOWEST, ignoreCancelled = true )
 	void onItemCrafted( CraftItemEvent event ) {
 		Player player = (Player) event.getWhoClicked();
@@ -65,7 +65,7 @@ public class PlayerEventHandler implements Listener {
 		}
 	}
 	
-	//when something is clicked in an inventory
+	// When an item is clicked in the inv
 	@EventHandler( priority = EventPriority.LOWEST )
 	void onItemClicked( InventoryClickEvent event ) {
 		Player player = (Player) event.getWhoClicked();
@@ -86,12 +86,12 @@ public class PlayerEventHandler implements Listener {
 		}
 	}
 	
-	//when a player interacts with the world
+	// When a player interacts with world
 	@EventHandler( priority = EventPriority.LOWEST )
 	void onPlayerInteract( PlayerInteractEvent event ) {
 		Player player = event.getPlayer();
 		
-		//ignore pressure plates for this
+		// Ignore pressure plates
 		if( event.getAction() == Action.PHYSICAL ) return;
 
 		MaterialInfo bannedInfo = TekkitCustomizer.instance.isBanned( ActionType.Ownership, player, player.getItemInHand().getTypeId(), player.getItemInHand().getData().getData(), player.getLocation() );
@@ -127,7 +127,7 @@ public class PlayerEventHandler implements Listener {
 		}
 	}
 	
-	//when a player interacts with an entity
+	// When a player interacts with an entity
 	@EventHandler( priority = EventPriority.LOWEST )
 	void onPlayerInteractEntity( PlayerInteractEntityEvent event ) {
 		Player player = event.getPlayer();
@@ -148,7 +148,7 @@ public class PlayerEventHandler implements Listener {
 		}
 	}
 	
-	//when a player picks up an item
+	// When a player pickups 
 	@EventHandler( priority = EventPriority.LOWEST, ignoreCancelled = true )
 	void onPlayerPickupItem( PlayerPickupItemEvent event ) {
 		Player player = event.getPlayer();
@@ -159,7 +159,7 @@ public class PlayerEventHandler implements Listener {
 		}
 	}
 	
-	//when a player switches the item he's holding in hand...
+	// When a player switches item in hand
 	@EventHandler( priority = EventPriority.LOWEST )
 	void onPlayerSwitchInHand( PlayerItemHeldEvent event ) {
 		//plan to check if the new item in hand is banned, if it's still equipped after half a second

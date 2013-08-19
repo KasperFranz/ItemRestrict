@@ -23,9 +23,10 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 
-//helps rapidly scan items as they are held in hand
-//when item held in hand, task is scheduled with slot number
-//after short delay, if still on equipping same slot number, this task checks to see if the equipped item is contraband
+/*
+	helps rapidly scan items as they are held in hand when item held in hand, task is scheduled with slot number
+	after short delay, if still on equipping same slot number, this task checks to see if the equipped item is contraband
+   */
 class InHandContrabandScanTask implements Runnable {
 	Player player;
 	int slotNumber;
@@ -36,21 +37,23 @@ class InHandContrabandScanTask implements Runnable {
 	}
 	
 	public void run() {
-		//if he logged out, don't do anything
+		// Exit if player logs out
 		if( !player.isOnline() ) return;
 		
-		//if he's not holding the same item anymore, do nothing
+		// Exit if same item is not held
 		PlayerInventory inventory = player.getInventory();
 		if( inventory.getHeldItemSlot() != slotNumber ) return;
 		
+		// Get item data
 		ItemStack inHandStack = player.getItemInHand();
 		if( inHandStack == null ) return;
 		
+		// Check for banned item
 		MaterialInfo bannedInfo = TekkitCustomizer.instance.isBanned( ActionType.Ownership, player, inHandStack.getTypeId(), inHandStack.getData().getData(), player.getLocation() );
 		if( bannedInfo != null ) {
 			inventory.setItem( slotNumber, new ItemStack( Material.AIR ) );
 			TekkitCustomizer.AddLogEntry( "Confiscated " + bannedInfo.toString() + " from " + player.getName() + "." );
 			player.sendMessage( "Banned item confiscated.  Reason: " + bannedInfo.reason );
-		}		
+		}
 	}
 }

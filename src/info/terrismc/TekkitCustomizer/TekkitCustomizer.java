@@ -43,17 +43,17 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 
 public class TekkitCustomizer extends JavaPlugin {
-	//for convenience, a reference to the instance of this plugin
+	// Self reference to plugin
 	public static TekkitCustomizer instance;
 	
-	//for logging to the console and log file
+	// For console logging
 	private static Logger log = Logger.getLogger( "Minecraft" );
 		
-	//where configuration data is kept
+	// Config file
 	private final static String dataLayerFolderPath = "plugins" + File.separator + "TekkitCustomizerData";
 	public final static String configFilePath = dataLayerFolderPath + File.separator + "config.yml";
 	
-	//user configuration, loaded/saved from a config.yml
+	// User configuration data
 	ArrayList<World> config_enforcementWorlds = new ArrayList<World>();
 	MaterialCollection config_usageBanned = new MaterialCollection();
 	MaterialCollection config_ownershipBanned = new MaterialCollection();
@@ -69,9 +69,8 @@ public class TekkitCustomizer extends JavaPlugin {
 		log.info("TekkitCustomizer: " + entry);
 	}
 	
-	//initializes well...   everything
-	public void onEnable() { 		
-		AddLogEntry( "TekkitCustomizer enabled." );		
+	public void onEnable() {
+		AddLogEntry( "TekkitCustomizer enabled." );
 		
 		instance = this;
 		

@@ -33,14 +33,15 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.inventory.ItemStack;
 
-public class EntityEventHandler implements Listener
-{
-	//when an entity (includes both dynamite and creepers) explodes...
+public class EntityEventHandler implements Listener {
+	
+	// When an entity (TNT and creepers) explodes
 	@EventHandler( ignoreCancelled = true )
-	public void onEntityExplode( EntityExplodeEvent explodeEvent )
-	{		
+	public void onEntityExplode( EntityExplodeEvent explodeEvent ) {
+		// Check world
 		if( !TekkitCustomizer.instance.config_enforcementWorlds.contains( explodeEvent.getLocation().getWorld() ) ) return;
 		
+		// Check surface explosion
 		if( TekkitCustomizer.instance.config_protectSurfaceFromExplosions ) {
 			List<Block> blocks = explodeEvent.blockList();
 			for( int i = 0; i < blocks.size(); i++ ) {
@@ -54,17 +55,19 @@ public class EntityEventHandler implements Listener
 	}
 	
 	@EventHandler( ignoreCancelled = true )
-	public void onEntityDamage ( EntityDamageEvent event )
-	{
+	public void onEntityDamage ( EntityDamageEvent event ) {
+		
+		// Filter and allow entity damage by entity events
 		if( !( event instanceof EntityDamageByEntityEvent ) ) return;
 		
 		EntityDamageByEntityEvent subEvent = (EntityDamageByEntityEvent) event;
 		
 		Player player = null;
 		Entity damageSource = subEvent.getDamager();
-		if( damageSource instanceof Player ) {
+		
+		// Find damage source player
+		if( damageSource instanceof Player )
 			player = (Player) damageSource;
-		}
 		else if( damageSource instanceof Arrow ) {
 			Arrow arrow = (Arrow)damageSource;
 			if(arrow.getShooter() instanceof Player ) {
@@ -78,6 +81,7 @@ public class EntityEventHandler implements Listener
 			}
 		}
 		
+		// Check hand for banned item
 		if(player != null) {
 			MaterialInfo bannedInfo = TekkitCustomizer.instance.isBanned( ActionType.Ownership, player, player.getItemInHand().getTypeId(), player.getItemInHand().getData().getData(), player.getLocation() );
 			if( bannedInfo != null ) {
