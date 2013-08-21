@@ -19,5 +19,5 @@
 package info.terrismc.TekkitCustomizer;
 
 public enum ActionType {
-	Usage, Ownership, Placement, Crafting
+	Usage, Ownership, Placement, World, Crafting
 }

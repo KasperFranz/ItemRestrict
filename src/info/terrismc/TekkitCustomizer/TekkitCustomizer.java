@@ -46,12 +46,21 @@ public class TekkitCustomizer extends JavaPlugin {
 	// Self reference to plugin
 	public static TekkitCustomizer instance;
 	
+	// Create static instances
+	public static Logger logger;
+	public static Server server;
+
+	// Create storge interfaces
+	public ConfigStore cStore;
+	public QuickStore qStore;
+	
+	
 	// For console logging
 	private static Logger log = Logger.getLogger( "Minecraft" );
 		
 	// Config file
 	private final static String dataLayerFolderPath = "plugins" + File.separator + "TekkitCustomizerData";
-	public final static String configFilePath = dataLayerFolderPath + File.separator + "config.yml";
+	public final static String configFilePath = dataLayerFolderPath + File.separator + "test.yml";
 	
 	// User configuration data
 	ArrayList<World> config_enforcementWorlds = new ArrayList<World>();
@@ -70,7 +79,17 @@ public class TekkitCustomizer extends JavaPlugin {
 	}
 	
 	public void onEnable() {
-		AddLogEntry( "TekkitCustomizer enabled." );
+		// Initialize static objects
+		logger = getLogger();
+		server = getServer();
+		
+		// Initialize storge interfaces
+		cStore = new ConfigStore( this );
+		qStore = new QuickStore( this );
+		
+		
+		
+		
 		
 		instance = this;
 		
