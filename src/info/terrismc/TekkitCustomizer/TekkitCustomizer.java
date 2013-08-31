@@ -55,6 +55,7 @@ public class TekkitCustomizer extends JavaPlugin {
 	public QuickStore qStore;
 	
 	
+	// Crappy code below
 	// For console logging
 	private static Logger log = Logger.getLogger( "Minecraft" );
 		
@@ -90,17 +91,17 @@ public class TekkitCustomizer extends JavaPlugin {
 		
 		
 		
-		
+		// Crappy code below
 		instance = this;
 		
-		//register for events
+		// Register for events
 		PluginManager pluginManager = this.getServer().getPluginManager();
 		
-		//player events
+		// Player events
 		PlayerEventHandler playerEventHandler = new PlayerEventHandler();
 		pluginManager.registerEvents( playerEventHandler, this );
 				
-		//block events
+		// Block events
 		BlockEventHandler blockEventHandler = new BlockEventHandler();
 		pluginManager.registerEvents( blockEventHandler, this );
 		

@@ -93,4 +93,9 @@ public class ConfigStore {
 		MaterialData matData = item.getData();
 		return "" + matData.getItemTypeId() + "-" + matData.getData();
 	}
+
+	public void getTest() {
+		// TODO Auto-generated method stub
+		
+	}
 }
