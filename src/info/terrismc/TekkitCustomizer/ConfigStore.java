@@ -40,11 +40,17 @@ public class ConfigStore {
 	}
 	
 	public boolean isBanned( Block block, ActionType actionType ) {
-		return isBanned( getConfigString( block ), actionType );
+		boolean banned = isBanned( getConfigString( block ), actionType );
+		if( !banned )
+			banned = isBanned( getConfigStringParent( block ), actionType );
+		return banned; 
 	}
 	
 	public boolean isBanned( ItemStack item, ActionType actionType ) {
-		return isBanned( getConfigString( item ), actionType );
+		boolean banned = isBanned( getConfigString( item ), actionType );
+		if( !banned )
+			banned = isBanned( getConfigStringParent( item ), actionType );
+		return banned;
 	}
 	
 	private boolean isBanned( String configString, ActionType actionType ) {
@@ -68,34 +74,51 @@ public class ConfigStore {
 	}
 	
 	public String getLabel( Block block ) {
-		return plugin.getConfig().getString( "Messages.Reasons." + getConfigString( block ) );
+		String label = plugin.getConfig().getString( "Messages.label." + getConfigString( block ) );
+		if( label.isEmpty() )
+			label = plugin.getConfig().getString( "Messages.label." + getConfigStringParent( block ) );
+		return label;
 	}
 	
 	public String getLabel( ItemStack item ) {
-		return plugin.getConfig().getString( "Messages.Reasons." + getConfigString( item ) );
+		String label = plugin.getConfig().getString( "Messages.label." + getConfigString( item ) );
+		if( label.isEmpty() )
+			label = plugin.getConfig().getString( "Messages.label." + getConfigStringParent( item ) );
+		return label;
 	}
 	
 	public String getReason( Block block ) {
-		return plugin.getConfig().getString( "Messages.Reasons." + getConfigString( block ) );
+		String reason = plugin.getConfig().getString( "Messages.reasons." + getConfigString( block ) );
+		if( reason.isEmpty() )
+			reason = plugin.getConfig().getString( "Messages.reasons." + getConfigStringParent( block ) );
+		return reason;
 	}
 	
 	public String getReason( ItemStack item ) {
-		return plugin.getConfig().getString( "Messages.Reasons." + getConfigString( item ) );
+		String reason = plugin.getConfig().getString( "Messages.reasons." + getConfigString( item ) );
+		if( reason.isEmpty() )
+			reason = plugin.getConfig().getString( "Messages.reasons." + getConfigStringParent( item ) );
+		return reason;
 	}
 	
 	private String getConfigString( Block block ) {
-		// Config version string of block and data value 
+		// Config version string of block id and data value 
 		return "" + block.getTypeId() + "-" + block.getData();
 	}
 	
+	private String getConfigStringParent( Block block ) {
+		// Config version string of block id 
+		return "" + block.getTypeId();
+	}
+	
 	private String getConfigString( ItemStack item ) {
-		// Config version string of item and data value
+		// Config version string of item id and data value
 		MaterialData matData = item.getData();
 		return "" + matData.getItemTypeId() + "-" + matData.getData();
 	}
-
-	public void getTest() {
-		// TODO Auto-generated method stub
-		
+	
+	private String getConfigStringParent( ItemStack item ) {
+		// Config version string of item id and data value
+		return "" + item.getTypeId();
 	}
 }
