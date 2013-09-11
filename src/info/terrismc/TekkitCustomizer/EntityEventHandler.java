@@ -55,7 +55,7 @@ public class EntityEventHandler implements Listener {
 	}
 	
 	@EventHandler( ignoreCancelled = true )
-	public void onEntityDamage ( EntityDamageEvent event ) {
+	public void onEntityDamage( EntityDamageEvent event ) {
 		
 		// Filter and allow entity damage by entity events
 		if( !( event instanceof EntityDamageByEntityEvent ) ) return;
