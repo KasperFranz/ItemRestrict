@@ -130,6 +130,7 @@ public class EventListener implements Listener {
 		// Cancel and notify
 		event.setCancelled( true );
 		if( event.getInventory() instanceof PlayerInventory ) {
+			// Remove if in player inventory
 			item.setType( Material.AIR );
 			player.sendMessage( "Banned item confiscated.  Reason: " );
 		}

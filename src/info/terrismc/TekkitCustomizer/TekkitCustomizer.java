@@ -38,7 +38,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.Recipe;
 import org.bukkit.inventory.ShapedRecipe;
-import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
 
@@ -87,7 +86,7 @@ public class TekkitCustomizer extends JavaPlugin {
 		qStore = new QuickStore( this );
 		
 		this.getServer().getPluginManager().registerEvents( new EventListener( this ), this );
-		
+		/*
 		// Crappy code below
 		instance = this;
 		
@@ -113,6 +112,7 @@ public class TekkitCustomizer extends JavaPlugin {
 		Server server = this.getServer();
 		ContrabandScannerTask task = new ContrabandScannerTask();
 		server.getScheduler().scheduleSyncRepeatingTask( this, task, 20 * 60, 20 * 60 );
+		*/
 	}
 	
 	private void loadConfiguration() {
