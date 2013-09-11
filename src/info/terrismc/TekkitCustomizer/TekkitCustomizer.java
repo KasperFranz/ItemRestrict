@@ -88,8 +88,7 @@ public class TekkitCustomizer extends JavaPlugin {
 		
 		this.getServer().getPluginManager().registerEvents( new EventListener( this ), this );
 		
-		// Crappy code starts here
-		
+		// Crappy code below
 		instance = this;
 		
 		// Register for events
