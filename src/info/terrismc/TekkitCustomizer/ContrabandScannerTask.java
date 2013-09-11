@@ -39,8 +39,7 @@ class ContrabandScannerTask implements Runnable
 	
 	public void run()
 	{
-		if( TekkitCustomizer.instance.config_worldBanned.size() > 0 )
-		{
+		if( TekkitCustomizer.instance.config_worldBanned.size() > 0 ) {
 			ArrayList<World> worlds = TekkitCustomizer.instance.config_enforcementWorlds;
 			for( int i = 0; i < worlds.size(); i++ ) {
 				World world = worlds.get( i );

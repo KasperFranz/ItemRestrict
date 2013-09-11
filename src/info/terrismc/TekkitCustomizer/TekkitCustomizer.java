@@ -54,7 +54,6 @@ public class TekkitCustomizer extends JavaPlugin {
 	public ConfigStore cStore;
 	public QuickStore qStore;
 	
-	
 	// For console logging
 	private static Logger log = Logger.getLogger( "Minecraft" );
 		
@@ -87,9 +86,9 @@ public class TekkitCustomizer extends JavaPlugin {
 		cStore = new ConfigStore( this );
 		qStore = new QuickStore( this );
 		
+		this.getServer().getPluginManager().registerEvents( new EventListener( this ), this );
 		
-		
-		
+		// Crappy code starts here
 		
 		instance = this;
 		
@@ -114,7 +113,7 @@ public class TekkitCustomizer extends JavaPlugin {
 		//runs every minute and scans: 5% online players, 5% of loaded chunks
 		Server server = this.getServer();
 		ContrabandScannerTask task = new ContrabandScannerTask();
-		server.getScheduler().scheduleSyncRepeatingTask( this, task, 20 * 60, 20 * 60 );		
+		server.getScheduler().scheduleSyncRepeatingTask( this, task, 20 * 60, 20 * 60 );
 	}
 	
 	private void loadConfiguration() {
@@ -462,7 +461,6 @@ public class TekkitCustomizer extends JavaPlugin {
 	
 	
 	public void onDisable() {
-		AddLogEntry("TekkitCustomizer disabled.");
 	}
 
 	public MaterialInfo isBanned(ActionType actionType, Player player, int typeId, byte data, Location location) {
