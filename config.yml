@@ -3,6 +3,10 @@ Worlds:
 - world
 - world_nether
 - world_the_end
+Scanner:
+  ScanFrequency:
+    player: 200
+    world: 1200
 Bans:
   Usage:
   - 27585-2
