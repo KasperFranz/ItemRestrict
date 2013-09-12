@@ -1,8 +1,8 @@
 package info.terrismc.TekkitCustomizer;
 
-import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -17,7 +17,6 @@ import org.bukkit.event.player.PlayerItemHeldEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.PlayerInventory;
 
 public class EventListener implements Listener {
 	TekkitCustomizer plugin;
@@ -30,19 +29,29 @@ public class EventListener implements Listener {
 	}
 	
 	private boolean isBannable( ItemStack item, ActionType actionType, World world ) {
+		// Check null
+		if( item == null )
+			return false;
+		
 		// Check world
-		if( cStore.isEnabledWorld( world ) ) return false;
+		if( !cStore.isEnabledWorld( world ) )
+			return false;
 		
 		// Check banned
-		return cStore.isBanned(item, actionType);
+		return cStore.isBanned( item, actionType );
 	}
 	
 	private boolean isBannable( Block block, ActionType actionType ) {
 		// Check world
-		if( cStore.isEnabledWorld( block.getWorld() ) ) return false;
+		if( !cStore.isEnabledWorld( block.getWorld() ) ) return false;
 		
 		// Check banned
 		return cStore.isBanned( block, actionType );
+	}
+	
+	private void notifyBan( Player player, ItemStack item ) {
+		player.sendMessage( "Banned: " + cStore.getLabel( item ) );
+		player.sendMessage( "Reason: " + cStore.getReason( item ) );
 	}
 	
 	// Ordered by ban type, Block/Entity/Player
@@ -51,26 +60,37 @@ public class EventListener implements Listener {
 	@EventHandler( priority = EventPriority.LOWEST )
 	public void onBlockPlace( BlockPlaceEvent event ) {
 		// When a block is placed
+		Player player = event.getPlayer();
 		Block block = event.getBlock();
+		ItemStack item = event.getItemInHand();
 
 		// Check usage bannable and world
-		if( isBannable( block, ActionType.Ownership ) ) {
-			// Cancel and notify
-			event.setCancelled( true );
-		}
-
-		// Check usage bannable and world
-		if( isBannable( block, ActionType.Usage ) ) {
+		if( isBannable( block, ActionType.Usage ) || isBannable( item, ActionType.Usage, player.getWorld() ) ) {
+			// Cancel
+			notifyBan( player, item );
 			event.setCancelled( true );
 			
 		}
 	}
 	
+	@EventHandler
 	public void onEntityDamageByEntity( EntityDamageByEntityEvent event ) {
-		event.getDamager();
+		// When a player interacts with world
+		Entity damager = event.getDamager();
+		if( !( damager instanceof Player ) ) return;
+		Player player = (Player) damager;
+		ItemStack item = player.getItemInHand();
+
+		// Check usage bannable and world
+		if( !isBannable( item, ActionType.Usage, player.getWorld() ) ) return;
+		
+		// Cancel
+		notifyBan( player, item );
+		event.setCancelled( true );
 	}
 	
-	void onPlayerInteract( PlayerInteractEvent event ) {
+	@EventHandler
+	public void onPlayerInteract( PlayerInteractEvent event ) {
 		// When a player interacts with world
 		Player player = event.getPlayer();
 		ItemStack item = event.getItem();
@@ -78,11 +98,13 @@ public class EventListener implements Listener {
 		// Check usage bannable and world
 		if( !isBannable( item, ActionType.Usage, player.getWorld() ) ) return;
 		
-		// Cancel and notify
+		// Cancel
+		notifyBan( player, item );
 		event.setCancelled( true );
 	}
 	
-	void onPlayerInteractEntity( PlayerInteractEntityEvent event ) {
+	@EventHandler
+	public void onPlayerInteractEntity( PlayerInteractEntityEvent event ) {
 		// TODO Test for redundency
 		// When a player interacts with an entity
 		Player player = event.getPlayer();
@@ -91,13 +113,15 @@ public class EventListener implements Listener {
 		// Check usage bannable and world
 		if( !isBannable( item, ActionType.Usage, player.getWorld() ) ) return;
 		
-		// Cancel and notify
+		// Cancel
+		notifyBan( player, item );
 		event.setCancelled( true );
 	}
 	
 	// Ownership Bans - Remove item when detected
 	
-	void onItemCrafted( CraftItemEvent event ) {
+	@EventHandler
+	public void onItemCrafted( CraftItemEvent event ) {
 		// When an item is crafted
 		Player player = (Player) event.getWhoClicked();
 		ItemStack item = event.getRecipe().getResult();
@@ -105,10 +129,12 @@ public class EventListener implements Listener {
 		// Check ownership bannable and world
 		if( !isBannable( item, ActionType.Ownership, player.getWorld() ) ) return;
 		
-		// Cancel and notify
+		// Cancel
+		notifyBan( player, item );
 		event.setCancelled( true );
 	}
 	
+	@EventHandler
 	public void onPlayerJoin(PlayerJoinEvent event) {
 		// When a player joins, check inv
 		Player player = event.getPlayer();
@@ -119,7 +145,8 @@ public class EventListener implements Listener {
 		// Confiscate bannables using a scan
 	}
 	
-	void onItemClicked( InventoryClickEvent event ) {
+	@EventHandler
+	public void onInventoryClick( InventoryClickEvent event ) {
 		// When an item is clicked in the inv
 		Player player = (Player) event.getWhoClicked();
 		ItemStack item = event.getCurrentItem();
@@ -127,18 +154,14 @@ public class EventListener implements Listener {
 		// Check usage bannable and world
 		if( !isBannable( item, ActionType.Ownership, player.getWorld() ) ) return;
 
-		// Cancel and notify
+		// Cancel and ban
+		notifyBan( player, item );
 		event.setCancelled( true );
-		if( event.getInventory() instanceof PlayerInventory ) {
-			// Remove if in player inventory
-			item.setType( Material.AIR );
-			player.sendMessage( "Banned item confiscated.  Reason: " );
-		}
-		else
-			player.sendMessage( "Sorry, that item is banned.  Reason: " );
+		event.setCurrentItem( null );
 	}
-	
-	void onPlayerPickupItem( PlayerPickupItemEvent event ) {
+
+	@EventHandler
+	public void onPlayerPickupItem( PlayerPickupItemEvent event ) {
 		// When a player pickups
 		Player player = event.getPlayer();
 		ItemStack item = event.getItem().getItemStack();
@@ -146,18 +169,23 @@ public class EventListener implements Listener {
 		// Check ownership bannable and world
 		if( !isBannable( item, ActionType.Ownership, player.getWorld() ) ) return;
 		
-		// Cancel and notify
+		// Cancelw
+		notifyBan( player, item );
 		event.setCancelled( true );
 	}
 	
-	void onPlayerSwitchInHand( PlayerItemHeldEvent event ) {
+	@EventHandler
+	public void onPlayerItemHeld( PlayerItemHeldEvent event ) {
 		// When a player switches item in hand
 		Player player = event.getPlayer();
-		ItemStack item = player.getItemInHand();
+		int slotId = event.getNewSlot();
+		ItemStack item = player.getInventory().getItem( slotId );;
 
 		// Check ownership bannable and world
 		if( !isBannable( item, ActionType.Ownership, player.getWorld() ) ) return;
 		
-		// Confiscate bannables
+		// Ban
+		notifyBan( player, item );
+		player.getInventory().setItem( slotId, null );
 	}
 }

@@ -75,30 +75,42 @@ public class ConfigStore {
 	
 	public String getLabel( Block block ) {
 		String label = plugin.getConfig().getString( "Messages.label." + getConfigString( block ) );
-		if( label.isEmpty() )
-			label = plugin.getConfig().getString( "Messages.label." + getConfigStringParent( block ) );
-		return label;
+		if( label != null )
+			return label;
+		label = plugin.getConfig().getString( "Messages.label." + getConfigStringParent( block ) );
+		if( label != null )
+			return label;
+		return block.getType().name() + " (" + getConfigString( block ) + ")";
 	}
 	
 	public String getLabel( ItemStack item ) {
 		String label = plugin.getConfig().getString( "Messages.label." + getConfigString( item ) );
-		if( label.isEmpty() )
-			label = plugin.getConfig().getString( "Messages.label." + getConfigStringParent( item ) );
-		return label;
+		if( label != null )
+			return label;
+		label = plugin.getConfig().getString( "Messages.label." + getConfigStringParent( item ) );
+		if( label != null )
+			return label;
+		return item.getType().name() + " (" + getConfigString( item ) + ")";
 	}
 	
 	public String getReason( Block block ) {
 		String reason = plugin.getConfig().getString( "Messages.reasons." + getConfigString( block ) );
-		if( reason.isEmpty() )
-			reason = plugin.getConfig().getString( "Messages.reasons." + getConfigStringParent( block ) );
-		return reason;
+		if( reason != null )
+			return reason;
+		reason = plugin.getConfig().getString( "Messages.reasons." + getConfigStringParent( block ) );
+		if( reason != null )
+			return reason;
+		return "Ask your server administrator.";
 	}
 	
 	public String getReason( ItemStack item ) {
 		String reason = plugin.getConfig().getString( "Messages.reasons." + getConfigString( item ) );
-		if( reason.isEmpty() )
-			reason = plugin.getConfig().getString( "Messages.reasons." + getConfigStringParent( item ) );
-		return reason;
+		if( reason != null )
+			return reason;
+		reason = plugin.getConfig().getString( "Messages.reasons." + getConfigStringParent( item ) );
+		if( reason != null )
+			return reason;
+		return "Ask your server administrator.";
 	}
 	
 	private String getConfigString( Block block ) {
