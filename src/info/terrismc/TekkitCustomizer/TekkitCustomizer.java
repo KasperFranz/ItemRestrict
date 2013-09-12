@@ -53,6 +53,10 @@ public class TekkitCustomizer extends JavaPlugin {
 	public ConfigStore cStore;
 	public QuickStore qStore;
 	
+	// Create scanner interfaces
+	private PlayerScanner pScanner;
+	private WorldScanner wScanner;
+	
 	// For console logging
 	private static Logger log = Logger.getLogger( "Minecraft" );
 		
@@ -86,6 +90,10 @@ public class TekkitCustomizer extends JavaPlugin {
 		qStore = new QuickStore( this );
 		
 		this.getServer().getPluginManager().registerEvents( new EventListener( this ), this );
+		
+		pScanner = new PlayerScanner( this );
+		wScanner = new WorldScanner( this );
+		
 		/*
 		// Crappy code below
 		instance = this;
