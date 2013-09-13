@@ -73,6 +73,27 @@ public class ConfigStore {
 		}
 	}
 	
+	public boolean isBannable( ItemStack item, ActionType actionType, World world ) {
+		// Check null
+		if( item == null )
+			return false;
+		
+		// Check world
+		if( !isEnabledWorld( world ) )
+			return false;
+		
+		// Check banned
+		return isBanned( item, actionType );
+	}
+	
+	public boolean isBannable( Block block, ActionType actionType ) {
+		// Check world
+		if( !isEnabledWorld( block.getWorld() ) ) return false;
+		
+		// Check banned
+		return isBanned( block, actionType );
+	}
+	
 	public String getLabel( Block block ) {
 		String label = plugin.getConfig().getString( "Messages.label." + getConfigString( block ) );
 		if( label != null )
