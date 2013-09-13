@@ -24,6 +24,7 @@ public class EventListener implements Listener {
 	ConfigStore cStore;
 	
 	public EventListener( TekkitCustomizer plugin ) {
+		this.plugin = plugin;
 		this.cStore = plugin.cStore;
 		this.qStore = plugin.qStore;
 	}
@@ -69,7 +70,6 @@ public class EventListener implements Listener {
 			// Cancel
 			notifyBan( player, item );
 			event.setCancelled( true );
-			
 		}
 	}
 	
@@ -175,17 +175,20 @@ public class EventListener implements Listener {
 	}
 	
 	@EventHandler
-	public void onPlayerItemHeld( PlayerItemHeldEvent event ) {
-		// When a player switches item in hand
-		Player player = event.getPlayer();
-		int slotId = event.getNewSlot();
-		ItemStack item = player.getInventory().getItem( slotId );;
-
-		// Check ownership bannable and world
-		if( !isBannable( item, ActionType.Ownership, player.getWorld() ) ) return;
-		
-		// Ban
-		notifyBan( player, item );
-		player.getInventory().setItem( slotId, null );
+	public void onPlayerItemHeld( final PlayerItemHeldEvent event ) {
+		TekkitCustomizer.server.getScheduler().runTaskAsynchronously( plugin, new Runnable() {
+			public void run() {
+				// When a player switches item in hand
+				Player player = event.getPlayer();
+				int slotId = event.getNewSlot();
+				ItemStack item = player.getInventory().getItem( slotId );;
+				
+				// Check ownership bannable and world
+				if( !isBannable( item, ActionType.Ownership, player.getWorld() ) ) return;
+				
+				// Ban
+				notifyBan( player, item );
+				player.getInventory().setItem( slotId, null );
+			}});
+		}
 	}
-}
