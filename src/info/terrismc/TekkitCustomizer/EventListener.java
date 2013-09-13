@@ -1,6 +1,5 @@
 package info.terrismc.TekkitCustomizer;
 
-import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -117,11 +116,9 @@ public class EventListener implements Listener {
 	public void onPlayerJoin(PlayerJoinEvent event) {
 		// When a player joins, check inv
 		Player player = event.getPlayer();
-
-		// Check ownership bannable and world
-		if( cStore.isEnabledWorld( player.getWorld() ) ) return;
 		
-		// Confiscate bannables using a scan
+		// scan inventory
+		qStore.scanInventory( player );
 	}
 	
 	@EventHandler
