@@ -80,7 +80,7 @@ public class TekkitCustomizer extends JavaPlugin {
 		// Initialize static objects
 		logger = getLogger();
 		server = getServer();
-		
+		//test
 		// Initialize storge interfaces
 		cStore = new ConfigStore( this );
 		qStore = new QuickStore( this );
