@@ -1,5 +1,8 @@
 package info.terrismc.TekkitCustomizer;
 
+import java.util.Random;
+
+import org.bukkit.Chunk;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -15,17 +18,20 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerItemHeldEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerPickupItemEvent;
+import org.bukkit.event.world.ChunkLoadEvent;
 import org.bukkit.inventory.ItemStack;
 
 public class EventListener implements Listener {
-	TekkitCustomizer plugin;
-	QuickStore qStore;
-	ConfigStore cStore;
+	private TekkitCustomizer plugin;
+	private QuickStore qStore;
+	private ConfigStore cStore;
+	private Random rand;
 	
 	public EventListener( TekkitCustomizer plugin ) {
 		this.plugin = plugin;
 		this.cStore = plugin.cStore;
 		this.qStore = plugin.qStore;
+		rand = new Random();
 	}
 	
 	private void notifyBan( Player player, ItemStack item ) {
@@ -113,12 +119,18 @@ public class EventListener implements Listener {
 	}
 	
 	@EventHandler
-	public void onPlayerJoin(PlayerJoinEvent event) {
-		// When a player joins, check inv
+	public void onPlayerJoin( PlayerJoinEvent event ) {
+		// Perform random screening
+		if( rand.nextDouble() > cStore.getScanFrequencyOnPlayerJoin() ) return;
+		
+		// When a player joins
 		Player player = event.getPlayer();
 		
-		// scan inventory
+		// Scan inventory
 		qStore.scanInventory( player );
+		
+		// Scan chunk
+		qStore.scanChunk( player.getLocation().getChunk() );
 	}
 	
 	@EventHandler
@@ -165,6 +177,20 @@ public class EventListener implements Listener {
 				// Ban
 				notifyBan( player, item );
 				player.getInventory().setItem( slotId, null );
-			}});
-		}
+			}
+		});
 	}
+	
+	// World Bans - Remove block when detected
+	@EventHandler
+	public void onChunkLoad( ChunkLoadEvent event ) {
+		// Perform random screening
+		if( rand.nextDouble() > cStore.getScanFrequencyOnChunkLoad() ) return;
+		
+		// When a chunk loads
+		Chunk chunk = event.getChunk();
+		
+		// Scan chunk
+		qStore.scanChunk( chunk );
+	}
+}

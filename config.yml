@@ -4,7 +4,10 @@ Worlds:
 - world_nether
 - world_the_end
 Scanner:
-  ScanFrequency:
+  event:
+    onPlayerJoin: 0.5
+    onChunkLoad: 0.1
+  interval:
     player: 200
     world: 1200
 Bans:

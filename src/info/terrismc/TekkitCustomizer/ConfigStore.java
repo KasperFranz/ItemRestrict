@@ -4,11 +4,13 @@ import java.util.List;
 
 import org.bukkit.World;
 import org.bukkit.block.Block;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.material.MaterialData;
 
 public class ConfigStore {
-	TekkitCustomizer plugin;
+	private TekkitCustomizer plugin;
+	private FileConfiguration config;
 	
 	// Cache config values
 	private List<String> worldList;
@@ -27,12 +29,13 @@ public class ConfigStore {
 	
 	private void reloadPlugin() {
 		plugin.saveDefaultConfig();
-		worldList = plugin.getConfig().getStringList( "Worlds" );
-		usageBans = plugin.getConfig().getStringList( "Bans.Usage" );
-		ownershipBans = plugin.getConfig().getStringList( "Bans.Ownership" );
-		placementBans = plugin.getConfig().getStringList( "Bans.Placement" );
-		worldBans = plugin.getConfig().getStringList( "Bans.World" );
-		craftingBans = plugin.getConfig().getStringList( "Bans.Crafting" );
+		config = plugin.getConfig();
+		worldList = config.getStringList( "Worlds" );
+		usageBans = config.getStringList( "Bans.Usage" );
+		ownershipBans = config.getStringList( "Bans.Ownership" );
+		placementBans = config.getStringList( "Bans.Placement" );
+		worldBans = config.getStringList( "Bans.World" );
+		craftingBans = config.getStringList( "Bans.Crafting" );
 	}
 
 	public boolean isEnabledWorld( World world ) {
@@ -153,5 +156,33 @@ public class ConfigStore {
 	private String getConfigStringParent( ItemStack item ) {
 		// Config version string of item id and data value
 		return "" + item.getTypeId();
+	}
+	
+	public double getScanFrequencyOnPlayerJoin() {
+		return config.getDouble("Scanner.event.onPlayerJoin");
+	}
+	
+	public double getScanFrequencyOnChunkLoad() {
+		return config.getDouble("Scanner.event.onChunkLoad");
+	}
+
+	public int getBanListSize( ActionType actionType ) {
+		// Select proper HashMap to pull banned response for
+		switch( actionType ) {
+		case Usage:
+			return usageBans.size();
+		case Ownership:
+			return ownershipBans.size();
+		case Placement:
+			return placementBans.size();
+		case World:
+			return worldBans.size();
+		case Crafting:
+			return craftingBans.size();
+		default:
+			// Should never reach here if all enum cases covered
+			TekkitCustomizer.logger.warning( "Unknown ActionType detected: " + actionType.toString() );
+			return 0;
+		}
 	}
 }
