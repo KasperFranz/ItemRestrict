@@ -1,4 +1,4 @@
-package info.terrismc.TekkitCustomizer;
+package info.terrismc.ItemRestrict;
 
 import java.util.List;
 
@@ -9,7 +9,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.material.MaterialData;
 
 public class ConfigStore {
-	private TekkitCustomizer plugin;
+	private ItemRestrict plugin;
 	private FileConfiguration config;
 	
 	// Cache config values
@@ -17,7 +17,7 @@ public class ConfigStore {
 	private List<String> usageBans;
 	private List<String> ownershipBans;
 	private List<String> worldBans;
-	public ConfigStore( TekkitCustomizer plugin ) {
+	public ConfigStore( ItemRestrict plugin ) {
 		this.plugin = plugin;
 		
 		// Force reload plugin
@@ -62,7 +62,7 @@ public class ConfigStore {
 			return worldBans.contains( configString );
 		default:
 			// Should never reach here if all enum cases covered
-			TekkitCustomizer.logger.warning( "Unknown ActionType detected: " + actionType.toString() );
+			ItemRestrict.logger.warning( "Unknown ActionType detected: " + actionType.toString() );
 			return false;
 		}
 	}
@@ -89,40 +89,40 @@ public class ConfigStore {
 	}
 	
 	public String getLabel( Block block ) {
-		String label = plugin.getConfig().getString( "Messages.label." + getConfigString( block ) );
+		String label = config.getString( "Messages.label." + getConfigString( block ) );
 		if( label != null )
 			return label;
-		label = plugin.getConfig().getString( "Messages.label." + getConfigStringParent( block ) );
+		label = config.getString( "Messages.label." + getConfigStringParent( block ) );
 		if( label != null )
 			return label;
 		return block.getType().name() + " (" + getConfigString( block ) + ")";
 	}
 	
 	public String getLabel( ItemStack item ) {
-		String label = plugin.getConfig().getString( "Messages.label." + getConfigString( item ) );
+		String label = config.getString( "Messages.label." + getConfigString( item ) );
 		if( label != null )
 			return label;
-		label = plugin.getConfig().getString( "Messages.label." + getConfigStringParent( item ) );
+		label = config.getString( "Messages.label." + getConfigStringParent( item ) );
 		if( label != null )
 			return label;
 		return item.getType().name() + " (" + getConfigString( item ) + ")";
 	}
 	
 	public String getReason( Block block ) {
-		String reason = plugin.getConfig().getString( "Messages.reasons." + getConfigString( block ) );
+		String reason = config.getString( "Messages.reasons." + getConfigString( block ) );
 		if( reason != null )
 			return reason;
-		reason = plugin.getConfig().getString( "Messages.reasons." + getConfigStringParent( block ) );
+		reason = config.getString( "Messages.reasons." + getConfigStringParent( block ) );
 		if( reason != null )
 			return reason;
 		return "Ask your server administrator.";
 	}
 	
 	public String getReason( ItemStack item ) {
-		String reason = plugin.getConfig().getString( "Messages.reasons." + getConfigString( item ) );
+		String reason = config.getString( "Messages.reasons." + getConfigString( item ) );
 		if( reason != null )
 			return reason;
-		reason = plugin.getConfig().getString( "Messages.reasons." + getConfigStringParent( item ) );
+		reason = config.getString( "Messages.reasons." + getConfigStringParent( item ) );
 		if( reason != null )
 			return reason;
 		return "Ask your server administrator.";
@@ -168,7 +168,7 @@ public class ConfigStore {
 			return worldBans.size();
 		default:
 			// Should never reach here if all enum cases covered
-			TekkitCustomizer.logger.warning( "Unknown ActionType detected: " + actionType.toString() );
+			ItemRestrict.logger.warning( "Unknown ActionType detected: " + actionType.toString() );
 			return 0;
 		}
 	}

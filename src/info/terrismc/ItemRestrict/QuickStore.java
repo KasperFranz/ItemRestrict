@@ -1,4 +1,4 @@
-package info.terrismc.TekkitCustomizer;
+package info.terrismc.ItemRestrict;
 
 import org.bukkit.Chunk;
 import org.bukkit.Material;
@@ -10,10 +10,10 @@ import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.scheduler.BukkitScheduler;
 
 public class QuickStore {
-	final private TekkitCustomizer plugin;
+	final private ItemRestrict plugin;
 	private ConfigStore cStore;
 	
-	public QuickStore( TekkitCustomizer plugin ) {
+	public QuickStore( ItemRestrict plugin ) {
 		this.plugin = plugin;
 		this.cStore = plugin.cStore;
 	}
@@ -21,7 +21,7 @@ public class QuickStore {
 	public void scanChunk( final Chunk chunk ) {
 		if( cStore.getBanListSize( ActionType.World ) == 0 ) return;
 		
-		final BukkitScheduler scheduler = TekkitCustomizer.server.getScheduler();
+		final BukkitScheduler scheduler = ItemRestrict.server.getScheduler();
 		scheduler.runTaskAsynchronously( plugin, new Runnable() {
 			public void run() {
 				final int yMax = chunk.getWorld().getMaxHeight();
@@ -31,7 +31,7 @@ public class QuickStore {
 						for( int y = 0; y < yMax; y++ ) {
 							block = chunk.getBlock( x, y, z );
 							if( cStore.isBannable( block, ActionType.World ) ) {
-								TekkitCustomizer.logger.warning("Found bannable block");
+								ItemRestrict.logger.warning("Found bannable block");
 								block.setType( Material.AIR );
 							}
 						}
@@ -44,7 +44,7 @@ public class QuickStore {
 	public void scanInventory( final Player player ) {
 		if( cStore.getBanListSize( ActionType.Ownership ) == 0 ) return;
 		
-		TekkitCustomizer.server.getScheduler().runTaskAsynchronously( plugin, new Runnable() {
+		ItemRestrict.server.getScheduler().runTaskAsynchronously( plugin, new Runnable() {
 			public void run() {
 				World world = player.getWorld();
 				PlayerInventory inventory = player.getInventory();

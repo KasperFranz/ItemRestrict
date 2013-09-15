@@ -1,10 +1,10 @@
-package info.terrismc.TekkitCustomizer;
+package info.terrismc.ItemRestrict;
 import java.util.logging.Logger;
 import org.bukkit.Server;
 import org.bukkit.plugin.java.JavaPlugin;
 
 
-public class TekkitCustomizer extends JavaPlugin {
+public class ItemRestrict extends JavaPlugin {
 	
 	// Create static instances
 	public static Logger logger;

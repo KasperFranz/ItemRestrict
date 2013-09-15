@@ -1,4 +1,4 @@
-package info.terrismc.TekkitCustomizer;
+package info.terrismc.ItemRestrict;
 
 import java.util.Random;
 
@@ -22,12 +22,12 @@ import org.bukkit.event.world.ChunkLoadEvent;
 import org.bukkit.inventory.ItemStack;
 
 public class EventListener implements Listener {
-	private TekkitCustomizer plugin;
+	private ItemRestrict plugin;
 	private QuickStore qStore;
 	private ConfigStore cStore;
 	private Random rand;
 	
-	public EventListener( TekkitCustomizer plugin ) {
+	public EventListener( ItemRestrict plugin ) {
 		this.plugin = plugin;
 		this.cStore = plugin.cStore;
 		this.qStore = plugin.qStore;
@@ -164,7 +164,7 @@ public class EventListener implements Listener {
 	
 	@EventHandler
 	public void onPlayerItemHeld( final PlayerItemHeldEvent event ) {
-		TekkitCustomizer.server.getScheduler().runTaskAsynchronously( plugin, new Runnable() {
+		ItemRestrict.server.getScheduler().runTaskAsynchronously( plugin, new Runnable() {
 			public void run() {
 				// When a player switches item in hand
 				Player player = event.getPlayer();
