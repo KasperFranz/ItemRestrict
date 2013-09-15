@@ -1,4 +1,4 @@
-package info.terrismc.ItemRestrict;
+package info.terrismc.itemrestrict;
 import java.util.logging.Logger;
 import org.bukkit.Server;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -23,6 +23,10 @@ public class ItemRestrict extends JavaPlugin {
 		cStore = new ConfigStore( this );
 		qStore = new QuickStore( this );
 		
+		// Register event handler
 		this.getServer().getPluginManager().registerEvents( new EventListener( this ), this );
+		
+		// Register command handler
+		getCommand( "ires" ).setExecutor( new CommandListener( this ) );
 	}
 }

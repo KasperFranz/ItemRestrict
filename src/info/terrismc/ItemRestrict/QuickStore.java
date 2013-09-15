@@ -1,4 +1,4 @@
-package info.terrismc.ItemRestrict;
+package info.terrismc.itemrestrict;
 
 import org.bukkit.Chunk;
 import org.bukkit.Material;

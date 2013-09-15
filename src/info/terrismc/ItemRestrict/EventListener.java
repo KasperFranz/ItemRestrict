@@ -1,4 +1,4 @@
-package info.terrismc.ItemRestrict;
+package info.terrismc.itemrestrict;
 
 import java.util.Random;
 

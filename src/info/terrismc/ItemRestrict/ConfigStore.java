@@ -1,4 +1,4 @@
-package info.terrismc.ItemRestrict;
+package info.terrismc.itemrestrict;
 
 import java.util.List;
 
@@ -26,7 +26,7 @@ public class ConfigStore {
 		reloadPlugin();
 	}
 	
-	private void reloadPlugin() {
+	public void reloadPlugin() {
 		plugin.saveDefaultConfig();
 		config = plugin.getConfig();
 		worldList = config.getStringList( "Worlds" );
