@@ -16,10 +16,7 @@ public class ConfigStore {
 	private List<String> worldList;
 	private List<String> usageBans;
 	private List<String> ownershipBans;
-	private List<String> placementBans;
 	private List<String> worldBans;
-	private List<String> craftingBans;
-	
 	public ConfigStore( TekkitCustomizer plugin ) {
 		this.plugin = plugin;
 		
@@ -33,9 +30,7 @@ public class ConfigStore {
 		worldList = config.getStringList( "Worlds" );
 		usageBans = config.getStringList( "Bans.Usage" );
 		ownershipBans = config.getStringList( "Bans.Ownership" );
-		placementBans = config.getStringList( "Bans.Placement" );
 		worldBans = config.getStringList( "Bans.World" );
-		craftingBans = config.getStringList( "Bans.Crafting" );
 	}
 
 	public boolean isEnabledWorld( World world ) {
@@ -63,12 +58,8 @@ public class ConfigStore {
 			return usageBans.contains( configString );
 		case Ownership:
 			return ownershipBans.contains( configString );
-		case Placement:
-			return placementBans.contains( configString );
 		case World:
 			return worldBans.contains( configString );
-		case Crafting:
-			return craftingBans.contains( configString );
 		default:
 			// Should never reach here if all enum cases covered
 			TekkitCustomizer.logger.warning( "Unknown ActionType detected: " + actionType.toString() );
@@ -173,12 +164,8 @@ public class ConfigStore {
 			return usageBans.size();
 		case Ownership:
 			return ownershipBans.size();
-		case Placement:
-			return placementBans.size();
 		case World:
 			return worldBans.size();
-		case Crafting:
-			return craftingBans.size();
 		default:
 			// Should never reach here if all enum cases covered
 			TekkitCustomizer.logger.warning( "Unknown ActionType detected: " + actionType.toString() );
