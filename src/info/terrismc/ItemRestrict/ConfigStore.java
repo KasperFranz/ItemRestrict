@@ -4,7 +4,9 @@ import java.util.List;
 
 import org.bukkit.World;
 import org.bukkit.block.Block;
+import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.material.MaterialData;
 
@@ -32,6 +34,22 @@ public class ConfigStore {
 		ownershipBans = config.getStringList( "Bans.Ownership" );
 		worldBans = config.getStringList( "Bans.World" );
 	}
+	
+	public boolean hasPermission( CommandSender sender, String node, boolean allowConsole ) {
+		if( sender instanceof Player ) {
+			if( !sender.hasPermission( node ) ) {
+				sender.sendMessage( "Insufficient permissions" );
+				return false;
+			}
+		}
+		else {
+			if( !allowConsole )
+				sender.sendMessage( "This is only a player command" );
+				return false;
+		}
+			
+		return true;
+	}
 
 	public boolean isEnabledWorld( World world ) {
 		return worldList.contains( world.getName() );
@@ -52,7 +70,7 @@ public class ConfigStore {
 	}
 	
 	private boolean isBanned( String configString, ActionType actionType ) {
-		// Select proper HashMap to pull banned response for
+		// Select proper HashMap
 		switch( actionType ) {
 		case Usage:
 			return usageBans.contains( configString );
@@ -67,24 +85,43 @@ public class ConfigStore {
 		}
 	}
 	
-	public boolean isBannable( ItemStack item, ActionType actionType, World world ) {
+	public boolean isBannable( Player player, ItemStack item, ActionType actionType ) {
 		// Check null
-		if( item == null )
-			return false;
+		if( item == null ) return false;
+
+		// Player checks
+		if( player != null ) {
+			// Check world
+			if( !isEnabledWorld( player.getWorld() ) ) return false;
+			
+			// Check exclude permission
+			if( player.hasPermission("ItemRestrict.bypass." + getActionTypeString( actionType ) + "." + getConfigString( item ) ) ) return false;
+			
+			// Check exclude parent permission
+			if( player.hasPermission("ItemRestrict.bypass." + getActionTypeString( actionType ) + "." + getConfigStringParent( item ) ) ) return false;
+		}
 		
-		// Check world
-		if( !isEnabledWorld( world ) )
-			return false;
-		
-		// Check banned
+		// Check ban list
 		return isBanned( item, actionType );
 	}
 	
-	public boolean isBannable( Block block, ActionType actionType ) {
-		// Check world
-		if( !isEnabledWorld( block.getWorld() ) ) return false;
+	public boolean isBannable( Player player, Block block, ActionType actionType ) {
+		// Check null
+		if( block == null ) return false;
+
+		// Player checks
+		if( player != null ) {
+			// Check world
+			if( !isEnabledWorld( player.getWorld() ) ) return false;
+			
+			// Check exclude permission
+			if( player.hasPermission("ItemRestrict.bypass." + getActionTypeString( actionType ) + "." + getConfigString( block ) ) ) return false;
+			
+			// Check exclude parent permission
+			if( player.hasPermission("ItemRestrict.bypass." + getActionTypeString( actionType ) + "." + getConfigStringParent( block ) ) ) return false;
+		}
 		
-		// Check banned
+		// Check ban list
 		return isBanned( block, actionType );
 	}
 	
@@ -128,6 +165,22 @@ public class ConfigStore {
 		return "Ask your server administrator.";
 	}
 	
+	private String getActionTypeString( ActionType actionType ) {
+		// Select proper string
+		switch( actionType ) {
+		case Usage:
+			return "Usage";
+		case Ownership:
+			return "Ownership";
+		case World:
+			return "World";
+		default:
+			// Should never reach here if all enum cases covered
+			ItemRestrict.logger.warning( "Unknown ActionType detected: " + actionType.toString() );
+			return "";
+		}
+	}
+	
 	private String getConfigString( Block block ) {
 		// Config version string of block id and data value 
 		return "" + block.getTypeId() + "-" + block.getData();
@@ -158,7 +211,7 @@ public class ConfigStore {
 	}
 
 	public int getBanListSize( ActionType actionType ) {
-		// Select proper HashMap to pull banned response for
+		// Select proper HashMap
 		switch( actionType ) {
 		case Usage:
 			return usageBans.size();

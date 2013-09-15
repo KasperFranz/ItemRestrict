@@ -50,7 +50,7 @@ public class EventListener implements Listener {
 		ItemStack item = event.getItemInHand();
 
 		// Check usage bannable and world
-		if( cStore.isBannable( block, ActionType.Usage ) || cStore.isBannable( item, ActionType.Usage, player.getWorld() ) ) {
+		if( cStore.isBannable( player, block, ActionType.Usage ) || cStore.isBannable( player, item, ActionType.Usage ) ) {
 			// Cancel
 			notifyBan( player, item );
 			event.setCancelled( true );
@@ -66,7 +66,7 @@ public class EventListener implements Listener {
 		ItemStack item = player.getItemInHand();
 
 		// Check usage bannable and world
-		if( !cStore.isBannable( item, ActionType.Usage, player.getWorld() ) ) return;
+		if( !cStore.isBannable( player, item, ActionType.Usage ) ) return;
 		
 		// Cancel
 		notifyBan( player, item );
@@ -80,7 +80,7 @@ public class EventListener implements Listener {
 		ItemStack item = event.getItem();
 
 		// Check usage bannable and world
-		if( !cStore.isBannable( item, ActionType.Usage, player.getWorld() ) ) return;
+		if( !cStore.isBannable( player, item, ActionType.Usage ) ) return;
 		
 		// Cancel
 		notifyBan( player, item );
@@ -95,7 +95,7 @@ public class EventListener implements Listener {
 		ItemStack item = event.getPlayer().getItemInHand();
 
 		// Check usage bannable and world
-		if( !cStore.isBannable( item, ActionType.Usage, player.getWorld() ) ) return;
+		if( !cStore.isBannable( player, item, ActionType.Usage ) ) return;
 		
 		// Cancel
 		notifyBan( player, item );
@@ -111,7 +111,7 @@ public class EventListener implements Listener {
 		ItemStack item = event.getRecipe().getResult();
 
 		// Check ownership bannable and world
-		if( !cStore.isBannable( item, ActionType.Ownership, player.getWorld() ) ) return;
+		if( !cStore.isBannable( player, item, ActionType.Ownership ) ) return;
 		
 		// Cancel
 		notifyBan( player, item );
@@ -140,7 +140,7 @@ public class EventListener implements Listener {
 		ItemStack item = event.getCurrentItem();
 		
 		// Check usage bannable and world
-		if( !cStore.isBannable( item, ActionType.Ownership, player.getWorld() ) ) return;
+		if( !cStore.isBannable( player, item, ActionType.Ownership ) ) return;
 
 		// Cancel and ban
 		notifyBan( player, item );
@@ -155,7 +155,7 @@ public class EventListener implements Listener {
 		ItemStack item = event.getItem().getItemStack();
 
 		// Check ownership bannable and world
-		if( !cStore.isBannable( item, ActionType.Ownership, player.getWorld() ) ) return;
+		if( !cStore.isBannable( player, item, ActionType.Ownership ) ) return;
 		
 		// Cancelw
 		notifyBan( player, item );
@@ -172,7 +172,7 @@ public class EventListener implements Listener {
 				ItemStack item = player.getInventory().getItem( slotId );;
 				
 				// Check ownership bannable and world
-				if( !cStore.isBannable( item, ActionType.Ownership, player.getWorld() ) ) return;
+				if( !cStore.isBannable( player, item, ActionType.Ownership ) ) return;
 				
 				// Ban
 				notifyBan( player, item );

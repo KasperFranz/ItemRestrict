@@ -2,7 +2,6 @@ package info.terrismc.ItemRestrict;
 
 import org.bukkit.Chunk;
 import org.bukkit.Material;
-import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -30,7 +29,7 @@ public class QuickStore {
 					for( int z = 0; z < 16; z++ ) {
 						for( int y = 0; y < yMax; y++ ) {
 							block = chunk.getBlock( x, y, z );
-							if( cStore.isBannable( block, ActionType.World ) ) {
+							if( cStore.isBannable( null, block, ActionType.World ) ) {
 								ItemRestrict.logger.warning("Found bannable block");
 								block.setType( Material.AIR );
 							}
@@ -46,11 +45,10 @@ public class QuickStore {
 		
 		ItemRestrict.server.getScheduler().runTaskAsynchronously( plugin, new Runnable() {
 			public void run() {
-				World world = player.getWorld();
 				PlayerInventory inventory = player.getInventory();
 				ItemStack[] items = inventory.getContents();
 				for( int i = 0; i < items.length; i++ )
-					if( cStore.isBannable( items[i] , ActionType.Ownership, world ) )
+					if( cStore.isBannable( player, items[i] , ActionType.Ownership ) )
 						inventory.setItem( i, null );
 			}
 		});
