@@ -38,6 +38,7 @@ public class QuickStore {
 										runnableBlock.setType( Material.AIR );
 									}
 								});
+								test branching
 								*/
 							}
 						}
