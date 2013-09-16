@@ -24,9 +24,9 @@ public class ItemRestrict extends JavaPlugin {
 		qStore = new QuickStore( this );
 		
 		// Register event handler
-		this.getServer().getPluginManager().registerEvents( new EventListener( this ), this );
+		server.getPluginManager().registerEvents( new EventListener( this ), this );
 		
 		// Register command handler
-		getCommand( "ires" ).setExecutor( new CommandListener( this ) );
+		this.getCommand( "ires" ).setExecutor( new CommandListener( this ) );
 	}
 }
