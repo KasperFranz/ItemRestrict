@@ -30,8 +30,15 @@ public class QuickStore {
 						for( int y = 0; y < yMax; y++ ) {
 							block = chunk.getBlock( x, y, z );
 							if( cStore.isBannable( null, block, ActionType.World ) ) {
+								final Block clearBlock = block;
 								ItemRestrict.logger.warning("Found bannable block");
-								block.setType( Material.AIR );
+								
+								// Remove block synchronously
+								scheduler.runTask( plugin , new Runnable() {
+									public void run() {
+										clearBlock.setType( Material.AIR );
+									}
+								});
 							}
 						}
 					}
