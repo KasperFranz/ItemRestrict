@@ -4,26 +4,26 @@ main: info.terrismc.itemrestrict.ItemRestrict
 author: krisdestruction
 description: Ban items and blocks for Bukkit, Tekkit, and FTB servers using the Bukkit API
 commands:
-   ires:
-      description: blah
-      usage: /ires
-      permission: itemrestrict.help
-   ires reload:
-      description: Reloads the config files
-      usage: /ires reload
-      permission: itemrestrict.reload
+  ires:
+    description: blah
+    usage: /ires
+    permission: itemrestrict.help
+  ires reload:
+    description: Reloads the config files
+    usage: /ires reload
+    permission: itemrestrict.reload
 permissions:
-    itemrestrict.admin.*:
-        description: Grants all administrative privileges.
-        children:
-            itemrestrict.blockinfo: true
-            itemrestrict.reload: true
-    itemrestrict.*:
-        description: Grants permission to bypass all bans.
-        default: op
-    itemrestrict.blockinfo:
-        description: Grants permission to use /BlockInfo.
-        default: op
-    itemrestrict.reload:
-        description: Grants permission to use /ReloadBannedItems.
-        default: op
+  itemrestrict.admin.*:
+    description: Grants all administrative privileges.
+    children:
+      itemrestrict.blockinfo: true
+      itemrestrict.reload: true
+  itemrestrict.*:
+    description: Grants permission to bypass all bans.
+    default: op
+  itemrestrict.blockinfo:
+    description: Grants permission to use /BlockInfo.
+    default: op
+  itemrestrict.reload:
+      description: Grants permission to use /ReloadBannedItems.
+      default: op
