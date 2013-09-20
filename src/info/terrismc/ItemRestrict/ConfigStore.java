@@ -126,20 +126,20 @@ public class ConfigStore {
 	}
 	
 	public String getLabel( Block block ) {
-		String label = config.getString( "Messages.label." + getConfigString( block ) );
+		String label = config.getString( "Messages.labels." + getConfigString( block ) );
 		if( label != null )
 			return label;
-		label = config.getString( "Messages.label." + getConfigStringParent( block ) );
+		label = config.getString( "Messages.labels." + getConfigStringParent( block ) );
 		if( label != null )
 			return label;
 		return block.getType().name() + " (" + getConfigString( block ) + ")";
 	}
 	
 	public String getLabel( ItemStack item ) {
-		String label = config.getString( "Messages.label." + getConfigString( item ) );
+		String label = config.getString( "Messages.labels." + getConfigString( item ) );
 		if( label != null )
 			return label;
-		label = config.getString( "Messages.label." + getConfigStringParent( item ) );
+		label = config.getString( "Messages.labels." + getConfigStringParent( item ) );
 		if( label != null )
 			return label;
 		return item.getType().name() + " (" + getConfigString( item ) + ")";

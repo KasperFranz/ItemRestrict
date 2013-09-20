@@ -74,7 +74,7 @@ Bans:
   - 26502
   World:
 Messages:
-  label:
+  labels:
     27585-1: Divining Rod III
     27526: Philosopher's Stone
     27556: Catalytic Lens
@@ -138,7 +138,7 @@ Messages:
     26500: Iron Hammer
     26501: Diamond Hammer
     26502: Golden Hammer
-  reason:
+  reasons:
     27585-1: Makes mining trivial, undermining the server economy.
     27526: Bypasses anti-grief to change blocks in protected areas without permission.
     27556: Bypasses anti-grief to change blocks in protected areas without permission.

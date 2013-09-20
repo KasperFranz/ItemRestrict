@@ -39,6 +39,11 @@ public class EventListener implements Listener {
 		player.sendMessage( "Reason: " + cStore.getReason( item ) );
 	}
 	
+	private void notifyBan( Player player, Block block ) {
+		player.sendMessage( "Banned: " + cStore.getLabel( block ) );
+		player.sendMessage( "Reason: " + cStore.getReason( block ) );
+	}
+	
 	// Ordered by ban type, Block/Entity/Player
 	
 	// Usage Bans - Prevent item usage
@@ -66,7 +71,7 @@ public class EventListener implements Listener {
 		ItemStack item = player.getItemInHand();
 
 		// Check usage bannable and world
-		if( !cStore.isBannable( player, item, ActionType.Usage ) ) return;
+		if( cStore.isBannable( player, item, ActionType.Usage ) ) return;
 		
 		// Cancel
 		notifyBan( player, item );
@@ -78,13 +83,17 @@ public class EventListener implements Listener {
 		// When a player interacts with world
 		Player player = event.getPlayer();
 		ItemStack item = event.getItem();
+		Block block = event.getClickedBlock();
 
 		// Check usage bannable and world
-		if( !cStore.isBannable( player, item, ActionType.Usage ) ) return;
-		
-		// Cancel
-		notifyBan( player, item );
-		event.setCancelled( true );
+		if( cStore.isBannable( player, item, ActionType.Usage ) ) {
+			notifyBan( player, item );
+			event.setCancelled( true );
+		}
+		else if( cStore.isBannable( player, block, ActionType.Usage ) ) {
+			notifyBan( player, block );
+			event.setCancelled( true );
+		}
 	}
 	
 	@EventHandler
