@@ -6,9 +6,6 @@ Scanner:
   event:
     onPlayerJoin: 0.5
     onChunkLoad: 0.1
-  interval:
-    player: 200
-    world: 1200
 Bans:
   Usage:
   - 27585-2
@@ -75,9 +72,7 @@ Bans:
   - 26500
   - 26501
   - 26502
-  Placement:
   World:
-  Crafting:
 Messages:
   label:
     27585-1: Divining Rod III
