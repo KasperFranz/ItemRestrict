@@ -9,6 +9,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.inventory.CraftItemEvent;
@@ -64,7 +65,7 @@ public class EventListener implements Listener {
 	
 	@EventHandler
 	public void onEntityDamageByEntity( EntityDamageByEntityEvent event ) {
-		// When a player interacts with world
+		// When an entity damages another entity
 		Entity damager = event.getDamager();
 		if( !( damager instanceof Player ) ) return;
 		Player player = (Player) damager;
@@ -90,7 +91,7 @@ public class EventListener implements Listener {
 			notifyBan( player, item );
 			event.setCancelled( true );
 		}
-		else if( cStore.isBannable( player, block, ActionType.Usage ) ) {
+		else if( cStore.isBannable( player, block, ActionType.Usage ) && event.getAction() == Action.RIGHT_CLICK_BLOCK ) {
 			notifyBan( player, block );
 			event.setCancelled( true );
 		}
