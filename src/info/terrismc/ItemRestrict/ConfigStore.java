@@ -128,40 +128,40 @@ public class ConfigStore {
 	public String getLabel( Block block ) {
 		String label = config.getString( "Messages.labels." + getConfigString( block ) );
 		if( label != null )
-			return label;
+			return label.replace( "&", "§" );
 		label = config.getString( "Messages.labels." + getConfigStringParent( block ) );
 		if( label != null )
-			return label;
+			return label.replace( "&", "§" );
 		return block.getType().name() + " (" + getConfigString( block ) + ")";
 	}
 	
 	public String getLabel( ItemStack item ) {
 		String label = config.getString( "Messages.labels." + getConfigString( item ) );
 		if( label != null )
-			return label;
+			return label.replace( "&", "§" );
 		label = config.getString( "Messages.labels." + getConfigStringParent( item ) );
 		if( label != null )
-			return label;
+			return label.replace( "&", "§" );
 		return item.getType().name() + " (" + getConfigString( item ) + ")";
 	}
 	
 	public String getReason( Block block ) {
 		String reason = config.getString( "Messages.reasons." + getConfigString( block ) );
 		if( reason != null )
-			return reason;
+			return reason.replace( "&", "§" );
 		reason = config.getString( "Messages.reasons." + getConfigStringParent( block ) );
 		if( reason != null )
-			return reason;
+			return reason.replace( "&", "§" );
 		return "Ask your server administrator.";
 	}
 	
 	public String getReason( ItemStack item ) {
 		String reason = config.getString( "Messages.reasons." + getConfigString( item ) );
 		if( reason != null )
-			return reason;
+			return reason.replace( "&", "§" );
 		reason = config.getString( "Messages.reasons." + getConfigStringParent( item ) );
 		if( reason != null )
-			return reason;
+			return reason.replace( "&", "§" );
 		return "Ask your server administrator.";
 	}
 	
