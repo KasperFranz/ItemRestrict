@@ -72,7 +72,7 @@ public class EventListener implements Listener {
 		ItemStack item = player.getItemInHand();
 
 		// Check usage bannable and world
-		if( cStore.isBannable( player, item, ActionType.Usage ) ) return;
+		if( !cStore.isBannable( player, item, ActionType.Usage ) ) return;
 		
 		// Cancel
 		notifyBan( player, item );
