@@ -4,7 +4,7 @@ Worlds:
 - world_the_end
 Scanner:
   event:
-    onPlayerJoin: 0.5
+    onPlayerJoin: 1
     onChunkLoad: 0.1
 Bans:
   Usage:

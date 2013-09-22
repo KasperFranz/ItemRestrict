@@ -99,7 +99,6 @@ public class EventListener implements Listener {
 	
 	@EventHandler
 	public void onPlayerInteractEntity( PlayerInteractEntityEvent event ) {
-		// TODO Test for redundency
 		// When a player interacts with an entity
 		Player player = event.getPlayer();
 		ItemStack item = event.getPlayer().getItemInHand();
