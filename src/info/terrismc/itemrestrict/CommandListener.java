@@ -15,7 +15,7 @@ public class CommandListener implements CommandExecutor {
 	public boolean onCommand(CommandSender sender, Command cmd, String alias, String[] args) {
 		if( args.length == 0 )
 			return false;
-		switch( args[1] ) {
+		switch( args[0] ) {
 		case "reload":
 			if( args.length == 1 ) {
 				cStore.reloadPlugin();
