@@ -23,10 +23,10 @@ public class ConfigStore {
 		this.plugin = plugin;
 		
 		// Force reload plugin
-		reloadPlugin();
+		reload();
 	}
 	
-	public void reloadPlugin() {
+	public void reload() {
 		plugin.saveDefaultConfig();
 		config = plugin.getConfig();
 		worldList = config.getStringList( "Worlds" );
