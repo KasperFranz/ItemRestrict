@@ -5,7 +5,7 @@ author: krisdestruction
 description: Ban items and blocks for Bukkit, Tekkit, and FTB servers using the Bukkit API
 commands:
   ires:
-    description: blah
+    description: Get plugin help
     usage: /ires
     permission: itemrestrict.help
   ires reload:
@@ -21,9 +21,6 @@ permissions:
   itemrestrict.*:
     description: Grants permission to bypass all bans.
     default: op
-  itemrestrict.blockinfo:
-    description: Grants permission to use /BlockInfo.
-    default: op
   itemrestrict.reload:
-      description: Grants permission to use /ReloadBannedItems.
+      description: Grants permission to reload the config.
       default: op
