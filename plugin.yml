@@ -13,14 +13,14 @@ commands:
     usage: /ires reload
     permission: itemrestrict.reload
 permissions:
-  itemrestrict.admin.*:
+  itemrestrict.admin:
     description: Grants all administrative privileges.
     children:
-      itemrestrict.blockinfo: true
+      itemrestrict.help: true
       itemrestrict.reload: true
-  itemrestrict.*:
-    description: Grants permission to bypass all bans.
-    default: op
+  itemrestrict.help:
+      description: Grants permission to access help root
+      default: op
   itemrestrict.reload:
-      description: Grants permission to reload the config.
+      description: Grants permission to reload the config
       default: op
