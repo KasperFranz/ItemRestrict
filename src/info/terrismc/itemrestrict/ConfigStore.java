@@ -27,7 +27,11 @@ public class ConfigStore {
 	}
 	
 	public void reload() {
+		// Config operations
 		plugin.saveDefaultConfig();
+		plugin.reloadConfig();
+		
+		// Config variables
 		config = plugin.getConfig();
 		worldList = config.getStringList( "Worlds" );
 		usageBans = config.getStringList( "Bans.Usage" );
