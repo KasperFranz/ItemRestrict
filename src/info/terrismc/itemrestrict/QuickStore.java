@@ -31,7 +31,6 @@ public class QuickStore {
 							block = chunk.getBlock( x, y, z );
 							if( cStore.isBannable( null, block, ActionType.World ) ) {
 								final Block clearBlock = block;
-								ItemRestrict.logger.warning("Found bannable block");
 								
 								// Remove block synchronously
 								scheduler.runTask( plugin , new Runnable() {
