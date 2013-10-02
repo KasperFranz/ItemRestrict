@@ -56,7 +56,7 @@ public class ConfigStore {
 	}
 
 	public boolean isEnabledWorld( World world ) {
-		return worldList.contains( world.getName() );
+		return worldList.contains( "All" ) || worldList.contains( world.getName() );
 	}
 	
 	public boolean isBanned( Block block, ActionType actionType ) {
