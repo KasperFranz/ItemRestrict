@@ -13,6 +13,10 @@ commands:
     usage: /ires reload
     permission: itemrestrict.reload
 permissions:
+  itemrestrict.*:
+    description: Grants all administrative privileges.
+    children:
+      itemrestrict.admin: true
   itemrestrict.admin:
     description: Grants all administrative privileges.
     children:
