@@ -184,6 +184,25 @@ public class ConfigStore {
 			return "";
 		}
 	}
+
+	private boolean isConfigString( String configString ) {
+		String[] magicNumbers = configString.split( "-" );
+		
+		// Check partition amount
+		if( magicNumbers.length > 2 )
+			return false;
+		
+		// Check for integers
+		for( String magicNumber : magicNumbers ) {
+			try {
+				Integer.parseInt( magicNumber );			
+			} 
+			catch( NumberFormatException e ) {
+		    	return false;	
+			}
+		}
+		return true;
+	}
 	
 	private String getConfigString( Block block ) {
 		// Config version string of block id and data value 
@@ -223,10 +242,79 @@ public class ConfigStore {
 			return ownershipBans.size();
 		case World:
 			return worldBans.size();
+		}
+		// Should never reach here if all enum cases covered
+		ItemRestrict.logger.warning( "Unknown ActionType detected: " + actionType.toString() );
+		return 0;
+	}
+
+	public void addBan( CommandSender sender, ActionType actionType, String configString) {
+		// Check valid actionType
+		if( actionType == null ) {
+			sender.sendMessage( "Invalid ban type. Valid ban types: Usage, Ownership, World" );
+			return;
+		}
+		
+		// Check valid config string
+		if( !isConfigString( configString ) ) {
+			sender.sendMessage( configString + "  is not a valid item" );
+			return;
+		}
+		
+		switch( actionType ) {
+		case Usage:
+			usageBans.add( configString );
+			config.set( "Bans.Usage", usageBans );
+			break;
+		case Ownership:
+			ownershipBans.add( configString );
+			config.set( "Bans.Ownership", ownershipBans );
+			break;
+		case World:
+			worldBans.add( configString );
+			config.set( "Bans.World", worldBans );
+			break;
 		default:
 			// Should never reach here if all enum cases covered
 			ItemRestrict.logger.warning( "Unknown ActionType detected: " + actionType.toString() );
-			return 0;
+			return;
 		}
+		plugin.saveConfig();
+		sender.sendMessage( "Item Banned" );
+	}
+
+	public void removeBan(CommandSender sender, ActionType actionType, String configString) {
+			// Check valid actionType
+			if( actionType == null ) {
+				sender.sendMessage( "Invalid ban type. Valid ban types: Usage, Ownership, World" );
+				return;
+			}
+			
+			// Check valid config string
+			if( !isConfigString( configString ) ) {
+				sender.sendMessage( configString + " is not a valid item" );
+				return;
+			}
+			
+			switch( actionType ) {
+			case Usage:
+				usageBans.remove( configString );
+				config.set( "Bans.Usage", usageBans );
+				break;
+			case Ownership:
+				ownershipBans.remove( configString );
+				config.set( "Bans.Ownership", ownershipBans );
+				break;
+			case World:
+				worldBans.remove( configString );
+				config.set( "Bans.World", worldBans );
+				break;
+			default:
+				// Should never reach here if all enum cases covered
+				ItemRestrict.logger.warning( "Unknown ActionType detected: " + actionType.toString() );
+				return;
+			}
+			plugin.saveConfig();
+			sender.sendMessage( "Item Unbanned" );
 	}
 }
