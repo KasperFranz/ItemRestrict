@@ -30,6 +30,7 @@ permissions:
     children:
       itemrestrict.help: true
       itemrestrict.reload: true
+      itemrestrict.ban: true
   itemrestrict.help:
       description: Grants permission to access help root
       default: op
