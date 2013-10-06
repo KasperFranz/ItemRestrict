@@ -18,7 +18,7 @@ public class CommandListener implements CommandExecutor {
 		switch( args[0] ) {
 		case "reload":
 			if( args.length == 1 ) {
-				cStore.reload();
+				cStore.reloadConfig();
 				sender.sendMessage("ItemRestrict Config Reloaded");
 				return true;	
 			}

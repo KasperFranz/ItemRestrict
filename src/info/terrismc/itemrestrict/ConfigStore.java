@@ -23,10 +23,10 @@ public class ConfigStore {
 		this.plugin = plugin;
 		
 		// Force reload plugin
-		reload();
+		reloadConfig();
 	}
 	
-	public void reload() {
+	public void reloadConfig() {
 		// Config operations
 		plugin.saveDefaultConfig();
 		plugin.reloadConfig();
