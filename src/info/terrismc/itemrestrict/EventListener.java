@@ -90,6 +90,7 @@ public class EventListener implements Listener {
 		if( cStore.isBannable( player, item, ActionType.Usage ) ) {
 			notifyBan( player, item );
 			event.setCancelled( true );
+			qStore.flashItem( player );
 		}
 		else if( cStore.isBannable( player, block, ActionType.Usage ) && event.getAction() == Action.RIGHT_CLICK_BLOCK ) {
 			notifyBan( player, block );

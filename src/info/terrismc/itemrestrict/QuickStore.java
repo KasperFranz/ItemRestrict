@@ -59,4 +59,15 @@ public class QuickStore {
 			}
 		});
 	}
+
+	public void flashItem( final Player player ) {
+		final ItemStack item = player.getItemInHand();
+		player.setItemInHand( null );
+		plugin.getServer().getScheduler().runTaskLater( plugin, new Runnable() {
+			public void run() {
+				player.setItemInHand( item );
+			}
+		}, 1);
+		
+	}
 }
