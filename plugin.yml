@@ -6,7 +6,11 @@ description: Ban items and blocks for Bukkit, Tekkit, and FTB servers using the 
 commands:
   ires:
     description: Get plugin help
-    usage: /ires
+    usage: |
+      Type /ires for help.
+      /ires reload - reload config file
+      /ires ban <banType> <id-datavalue> - Add item to ban list
+      /ires unban <banType> <id-datavalue> - Remove item from ban list
     permission: itemrestrict.help
   ires reload:
     description: Reloads the config files
