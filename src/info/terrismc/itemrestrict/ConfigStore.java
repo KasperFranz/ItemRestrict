@@ -17,6 +17,7 @@ public class ConfigStore {
 	// Cache config values
 	private List<String> worldList;
 	private List<String> usageBans;
+	private List<String> craftingBans;
 	private List<String> ownershipBans;
 	private List<String> worldBans;
 	public ConfigStore( ItemRestrict plugin ) {
@@ -35,6 +36,7 @@ public class ConfigStore {
 		config = plugin.getConfig();
 		worldList = config.getStringList( "Worlds" );
 		usageBans = config.getStringList( "Bans.Usage" );
+		craftingBans = config.getStringList( "Bans.Crafting" );
 		ownershipBans = config.getStringList( "Bans.Ownership" );
 		worldBans = config.getStringList( "Bans.World" );
 	}
@@ -78,6 +80,8 @@ public class ConfigStore {
 		switch( actionType ) {
 		case Usage:
 			return usageBans.contains( configString );
+		case Crafting:
+			return craftingBans.contains( configString );
 		case Ownership:
 			return ownershipBans.contains( configString );
 		case World:
@@ -174,6 +178,8 @@ public class ConfigStore {
 		switch( actionType ) {
 		case Usage:
 			return "Usage";
+		case Crafting:
+			return "Crafting";
 		case Ownership:
 			return "Ownership";
 		case World:
@@ -238,6 +244,8 @@ public class ConfigStore {
 		switch( actionType ) {
 		case Usage:
 			return usageBans.size();
+		case Crafting:
+			return craftingBans.size();
 		case Ownership:
 			return ownershipBans.size();
 		case World:
@@ -265,6 +273,10 @@ public class ConfigStore {
 		case Usage:
 			usageBans.add( configString );
 			config.set( "Bans.Usage", usageBans );
+			break;
+		case Crafting:
+			craftingBans.add( configString );
+			config.set( "Bans.Crafting", craftingBans );
 			break;
 		case Ownership:
 			ownershipBans.add( configString );
@@ -300,6 +312,10 @@ public class ConfigStore {
 			case Usage:
 				usageBans.remove( configString );
 				config.set( "Bans.Usage", usageBans );
+				break;
+			case Crafting:
+				craftingBans.remove( configString );
+				config.set( "Bans.Crafting", craftingBans );
 				break;
 			case Ownership:
 				ownershipBans.remove( configString );

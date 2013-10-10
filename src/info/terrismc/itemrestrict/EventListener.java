@@ -112,7 +112,7 @@ public class EventListener implements Listener {
 		event.setCancelled( true );
 	}
 	
-	// Ownership Bans - Remove item when detected
+	// Crafting Bans - Prevent crafting when detected
 	
 	@EventHandler
 	public void onItemCrafted( CraftItemEvent event ) {
@@ -121,12 +121,14 @@ public class EventListener implements Listener {
 		ItemStack item = event.getRecipe().getResult();
 
 		// Check ownership bannable and world
-		if( !cStore.isBannable( player, item, ActionType.Ownership ) ) return;
-		
-		// Cancel
-		notifyBan( player, item );
-		event.setCancelled( true );
+		if( cStore.isBannable( player, item, ActionType.Ownership ) || cStore.isBannable( player, item, ActionType.Crafting ) ) {
+			// Cancel
+			notifyBan( player, item );
+			event.setCancelled( true );
+		}
 	}
+	
+	// Ownership Bans - Remove item when detected
 	
 	@EventHandler
 	public void onPlayerJoin( PlayerJoinEvent event ) {
