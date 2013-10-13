@@ -13,7 +13,9 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.inventory.CraftItemEvent;
+import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryType.SlotType;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerItemHeldEvent;
@@ -149,15 +151,43 @@ public class EventListener implements Listener {
 	public void onInventoryClick( InventoryClickEvent event ) {
 		// When an item is clicked in the inv
 		Player player = (Player) event.getWhoClicked();
-		ItemStack item = event.getCurrentItem();
+		ItemStack clickItem = event.getCurrentItem();
+		ItemStack cursorItem = event.getCursor();
 		
 		// Check usage bannable and world
-		if( !cStore.isBannable( player, item, ActionType.Ownership ) ) return;
-
-		// Cancel and ban
-		notifyBan( player, item );
-		event.setCancelled( true );
-		event.setCurrentItem( null );
+		if( cStore.isBannable( player, clickItem, ActionType.Ownership ) ) {
+			// Cancel and ban
+			notifyBan( player, clickItem );
+			event.setCancelled( true );
+			event.setCurrentItem( null );
+		}
+		
+		// Check equip armour
+		SlotType slotType = event.getSlotType();
+		InventoryAction action = event.getAction();
+		if( slotType == SlotType.ARMOR && isPlaceInventory( action ) && cStore.isBannable( player, cursorItem, ActionType.Usage ) ) {
+			// Cancel
+			notifyBan( player, cursorItem );
+			event.setCancelled( true );
+		}
+		
+		// Check equip armour
+		if( slotType != SlotType.ARMOR && action == InventoryAction.MOVE_TO_OTHER_INVENTORY && cStore.isBannable( player, clickItem, ActionType.Usage ) ) {
+			// Cancel
+			notifyBan( player, clickItem );
+			event.setCancelled( true );
+		}
+	}
+	
+	private boolean isPlaceInventory( InventoryAction action ) {
+		switch( action ) {
+		case PLACE_ALL:
+		case PLACE_SOME:
+		case PLACE_ONE:
+			return true;
+		default:
+			return false;
+		}
 	}
 
 	@EventHandler
