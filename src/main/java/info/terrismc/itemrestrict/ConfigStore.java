@@ -136,40 +136,40 @@ public class ConfigStore {
 	public String getLabel( Block block ) {
 		String label = config.getString( "Messages.labels." + getConfigString( block ) );
 		if( label != null )
-			return label.replace( "&", "§" );
+			return label.replace( "&", "ï¿½" );
 		label = config.getString( "Messages.labels." + getConfigStringParent( block ) );
 		if( label != null )
-			return label.replace( "&", "§" );
+			return label.replace( "&", "ï¿½" );
 		return block.getType().name() + " (" + getConfigString( block ) + ")";
 	}
 	
 	public String getLabel( ItemStack item ) {
 		String label = config.getString( "Messages.labels." + getConfigString( item ) );
 		if( label != null )
-			return label.replace( "&", "§" );
+			return label.replace( "&", "ï¿½" );
 		label = config.getString( "Messages.labels." + getConfigStringParent( item ) );
 		if( label != null )
-			return label.replace( "&", "§" );
+			return label.replace( "&", "ï¿½" );
 		return item.getType().name() + " (" + getConfigString( item ) + ")";
 	}
 	
 	public String getReason( Block block ) {
 		String reason = config.getString( "Messages.reasons." + getConfigString( block ) );
 		if( reason != null )
-			return reason.replace( "&", "§" );
+			return reason.replace( "&", "ï¿½" );
 		reason = config.getString( "Messages.reasons." + getConfigStringParent( block ) );
 		if( reason != null )
-			return reason.replace( "&", "§" );
+			return reason.replace( "&", "ï¿½" );
 		return "Ask your server administrator.";
 	}
 	
 	public String getReason( ItemStack item ) {
 		String reason = config.getString( "Messages.reasons." + getConfigString( item ) );
 		if( reason != null )
-			return reason.replace( "&", "§" );
+			return reason.replace( "&", "ï¿½" );
 		reason = config.getString( "Messages.reasons." + getConfigStringParent( item ) );
 		if( reason != null )
-			return reason.replace( "&", "§" );
+			return reason.replace( "&", "ï¿½" );
 		return "Ask your server administrator.";
 	}
 	
@@ -210,22 +210,26 @@ public class ConfigStore {
 		return true;
 	}
 	
+	@SuppressWarnings("deprecation")
 	private String getConfigString( Block block ) {
 		// Config version string of block id and data value 
 		return "" + block.getTypeId() + "-" + block.getData();
 	}
 	
+	@SuppressWarnings("deprecation")
 	private String getConfigStringParent( Block block ) {
 		// Config version string of block id 
 		return "" + block.getTypeId();
 	}
 	
+	@SuppressWarnings("deprecation")
 	private String getConfigString( ItemStack item ) {
 		// Config version string of item id and data value
 		MaterialData matData = item.getData();
 		return "" + matData.getItemTypeId() + "-" + matData.getData();
 	}
 	
+	@SuppressWarnings("deprecation")
 	private String getConfigStringParent( ItemStack item ) {
 		// Config version string of item id and data value
 		return "" + item.getTypeId();

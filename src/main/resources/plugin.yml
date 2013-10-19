@@ -1,0 +1,46 @@
+version: 1.5
+name: ItemRestrict
+main: info.terrismc.itemrestrict.ItemRestrict
+author: krisdestruction
+description: Ban items and blocks for Bukkit, Tekkit, and FTB servers using the Bukkit API
+commands:
+  ires:
+    description: Get plugin help
+    usage: |
+      Type /ires for help.
+      /ires reload - reload config file
+      /ires ban <banType> <id-datavalue> - Add item to ban list
+      /ires unban <banType> <id-datavalue> - Remove item from ban list
+    permission: itemrestrict.help
+  ires reload:
+    description: Reloads the config files
+    usage: /ires reload
+    permission: itemrestrict.reload
+  ires ban:
+    description: Adds to the ban list
+    usage: /ires ban <banType> <id-datavalue>
+    permission: itemrestrict.ban
+  ires unban:
+    description: Removes from the ban list
+    usage: /ires unban <banType> <id-datavalue>
+    permission: itemrestrict.ban
+permissions:
+  itemrestrict.*:
+    description: Grants all administrative privileges.
+    children:
+      itemrestrict.admin: true
+  itemrestrict.admin:
+    description: Grants all administrative privileges.
+    children:
+      itemrestrict.help: true
+      itemrestrict.reload: true
+      itemrestrict.ban: true
+  itemrestrict.help:
+      description: Grants permission to access help root
+      default: op
+  itemrestrict.reload:
+      description: Grants permission to reload the config
+      default: op
+  itemrestrict.ban:
+      description: Grants permission to modify the ban list
+      default: op
