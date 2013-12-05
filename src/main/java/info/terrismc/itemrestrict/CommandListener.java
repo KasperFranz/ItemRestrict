@@ -40,6 +40,10 @@ public class CommandListener implements CommandExecutor {
 		switch( actionTypeString.toLowerCase() ) {
 		case "usage":
 			return ActionType.Usage;
+		case "equip":
+			return ActionType.Equip;
+		case "crafting":
+			return ActionType.Crafting;
 		case "ownership":
 			return ActionType.Ownership;
 		case "world":

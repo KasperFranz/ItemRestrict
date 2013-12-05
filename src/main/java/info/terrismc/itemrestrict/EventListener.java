@@ -15,6 +15,7 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.inventory.CraftItemEvent;
 import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryType.SlotType;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -25,27 +26,16 @@ import org.bukkit.event.world.ChunkLoadEvent;
 import org.bukkit.inventory.ItemStack;
 
 public class EventListener implements Listener {
-	private ItemRestrict plugin;
 	private QuickStore qStore;
 	private ConfigStore cStore;
 	private Random rand;
 	
 	public EventListener( ItemRestrict plugin ) {
-		this.plugin = plugin;
 		this.cStore = plugin.cStore;
 		this.qStore = plugin.qStore;
 		rand = new Random();
 	}
 	
-	private void notifyBan( Player player, ItemStack item ) {
-		player.sendMessage( "Banned: " + cStore.getLabel( item ) );
-		player.sendMessage( "Reason: " + cStore.getReason( item ) );
-	}
-	
-	private void notifyBan( Player player, Block block ) {
-		player.sendMessage( "Banned: " + cStore.getLabel( block ) );
-		player.sendMessage( "Reason: " + cStore.getReason( block ) );
-	}
 	
 	// Ordered by ban type, Block/Entity/Player
 	
@@ -60,7 +50,7 @@ public class EventListener implements Listener {
 		// Check usage bannable and world
 		if( cStore.isBannable( player, block, ActionType.Usage ) || cStore.isBannable( player, item, ActionType.Usage ) ) {
 			// Cancel
-			notifyBan( player, item );
+			qStore.notifyBan( player, item );
 			event.setCancelled( true );
 		}
 	}
@@ -77,7 +67,7 @@ public class EventListener implements Listener {
 		if( !cStore.isBannable( player, item, ActionType.Usage ) ) return;
 		
 		// Cancel
-		notifyBan( player, item );
+		qStore.notifyBan( player, item );
 		event.setCancelled( true );
 	}
 	
@@ -90,12 +80,12 @@ public class EventListener implements Listener {
 
 		// Check usage bannable and world
 		if( cStore.isBannable( player, item, ActionType.Usage ) ) {
-			notifyBan( player, item );
+			qStore.notifyBan( player, item );
 			event.setCancelled( true );
 			qStore.flashItem( player );
 		}
 		else if( cStore.isBannable( player, block, ActionType.Usage ) && event.getAction() == Action.RIGHT_CLICK_BLOCK ) {
-			notifyBan( player, block );
+			qStore.notifyBan( player, block );
 			event.setCancelled( true );
 		}
 	}
@@ -110,7 +100,7 @@ public class EventListener implements Listener {
 		if( !cStore.isBannable( player, item, ActionType.Usage ) ) return;
 		
 		// Cancel
-		notifyBan( player, item );
+		qStore.notifyBan( player, item );
 		event.setCancelled( true );
 	}
 	
@@ -125,7 +115,7 @@ public class EventListener implements Listener {
 		// Check ownership bannable and world
 		if( cStore.isBannable( player, item, ActionType.Ownership ) || cStore.isBannable( player, item, ActionType.Crafting ) ) {
 			// Cancel
-			notifyBan( player, item );
+			qStore.notifyBan( player, item );
 			event.setCancelled( true );
 		}
 	}
@@ -157,7 +147,7 @@ public class EventListener implements Listener {
 		// Check usage bannable and world
 		if( cStore.isBannable( player, clickItem, ActionType.Ownership ) ) {
 			// Cancel and ban
-			notifyBan( player, clickItem );
+			qStore.notifyBan( player, clickItem );
 			event.setCancelled( true );
 			event.setCurrentItem( null );
 		}
@@ -167,14 +157,14 @@ public class EventListener implements Listener {
 		InventoryAction action = event.getAction();
 		if( slotType == SlotType.ARMOR && isPlaceInventory( action ) && cStore.isBannable( player, cursorItem, ActionType.Usage ) ) {
 			// Cancel
-			notifyBan( player, cursorItem );
+			qStore.notifyBan( player, cursorItem );
 			event.setCancelled( true );
 		}
 		
 		// Check equip armour
 		if( slotType != SlotType.ARMOR && action == InventoryAction.MOVE_TO_OTHER_INVENTORY && cStore.isBannable( player, clickItem, ActionType.Usage ) ) {
 			// Cancel
-			notifyBan( player, clickItem );
+			qStore.notifyBan( player, clickItem );
 			event.setCancelled( true );
 		}
 	}
@@ -195,33 +185,66 @@ public class EventListener implements Listener {
 		// When a player pickups
 		Player player = event.getPlayer();
 		ItemStack item = event.getItem().getItemStack();
-
 		// Check ownership bannable and world
-		if( !cStore.isBannable( player, item, ActionType.Ownership ) ) return;
-		
-		// Cancelw
-		notifyBan( player, item );
-		event.setCancelled( true );
+		if( cStore.isBannable( player, item, ActionType.Ownership ) ) {			
+			// Cancel
+			qStore.notifyBan( player, item );
+			event.setCancelled( true );
+		}
+		else if ( cStore.isBannable( player, item, ActionType.Equip ) ) {	
+			int invSpace = 0;
+			int freeSlot = 0;
+			for (int i = 9; i < 36; i++) {
+				if ( player.getInventory().getItem(i) == null ) {
+					invSpace = 1;
+					freeSlot= i;
+					break;
+				}
+			}
+			if ( invSpace == 1 ) {
+				qStore.notifyBan( player, item );
+				event.getItem().remove();
+				event.setCancelled( true );
+				player.getInventory().setItem( freeSlot, item );
+			}
+			else {
+				player.sendMessage( "You are not allowed to equip this item and your internal inventory is full." );
+				event.setCancelled( true );
+			}
+		}
+	}
+	
+	@EventHandler
+	public void onInventory ( InventoryCloseEvent event ) {
+		Player player = (Player) event.getPlayer();		
+		// Scan inventory
+		qStore.scanInventory( player );
 	}
 	
 	@EventHandler
 	public void onPlayerItemHeld( final PlayerItemHeldEvent event ) {
-		ItemRestrict.server.getScheduler().runTaskAsynchronously( plugin, new Runnable() {
-			public void run() {
+	// Don´t do this, this only causes server crashes, what happens if another plugin accesses the slot during it gets deleted ?
+		//ItemRestrict.server.getScheduler().runTaskAsynchronously( plugin, new Runnable() {
+		//	public void run() {
 				// When a player switches item in hand
 				Player player = event.getPlayer();
 				int slotId = event.getNewSlot();
 				ItemStack item = player.getInventory().getItem( slotId );;
 				
 				// Check ownership bannable and world
-				if( !cStore.isBannable( player, item, ActionType.Ownership ) ) return;
-				
-				// Ban
-				notifyBan( player, item );
-				player.getInventory().setItem( slotId, null );
+				if( item != null && cStore.isBannable( player, item, ActionType.Ownership ) ) {				
+					// Ban
+					qStore.notifyBan( player, item );
+					player.getInventory().setItem( slotId, null );
+				}
+				else if( item != null && cStore.isBannable( player, item, ActionType.Equip ) ) {
+					qStore.notifyBan( player, item );
+					player.getInventory().setItem( slotId, null );
+					player.getWorld().dropItemNaturally( player.getLocation(), item );
+				}
 			}
-		});
-	}
+		//});
+	//}
 	
 	// World Bans - Remove block when detected
 	@EventHandler

@@ -1,4 +1,5 @@
 package info.terrismc.itemrestrict;
+
 import java.util.logging.Logger;
 import org.bukkit.Server;
 import org.bukkit.plugin.java.JavaPlugin;

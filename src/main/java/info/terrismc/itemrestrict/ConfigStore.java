@@ -17,6 +17,7 @@ public class ConfigStore {
 	// Cache config values
 	private List<String> worldList;
 	private List<String> usageBans;
+	private List<String> equipBans;
 	private List<String> craftingBans;
 	private List<String> ownershipBans;
 	private List<String> worldBans;
@@ -36,6 +37,7 @@ public class ConfigStore {
 		config = plugin.getConfig();
 		worldList = config.getStringList( "Worlds" );
 		usageBans = config.getStringList( "Bans.Usage" );
+		equipBans = config.getStringList( "Bans.Equip" );
 		craftingBans = config.getStringList( "Bans.Crafting" );
 		ownershipBans = config.getStringList( "Bans.Ownership" );
 		worldBans = config.getStringList( "Bans.World" );
@@ -80,6 +82,8 @@ public class ConfigStore {
 		switch( actionType ) {
 		case Usage:
 			return usageBans.contains( configString );
+		case Equip:
+			return equipBans.contains( configString );
 		case Crafting:
 			return craftingBans.contains( configString );
 		case Ownership:
@@ -178,6 +182,8 @@ public class ConfigStore {
 		switch( actionType ) {
 		case Usage:
 			return "Usage";
+		case Equip:
+			return "Equip";
 		case Crafting:
 			return "Crafting";
 		case Ownership:
@@ -248,6 +254,8 @@ public class ConfigStore {
 		switch( actionType ) {
 		case Usage:
 			return usageBans.size();
+		case Equip:
+			return equipBans.size();
 		case Crafting:
 			return craftingBans.size();
 		case Ownership:
@@ -263,7 +271,7 @@ public class ConfigStore {
 	public void addBan( CommandSender sender, ActionType actionType, String configString) {
 		// Check valid actionType
 		if( actionType == null ) {
-			sender.sendMessage( "Invalid ban type. Valid ban types: Usage, Ownership, World" );
+			sender.sendMessage( "Invalid ban type. Valid ban types: Usage, Equip, Crafting, Ownership, World" );
 			return;
 		}
 		
@@ -277,6 +285,10 @@ public class ConfigStore {
 		case Usage:
 			usageBans.add( configString );
 			config.set( "Bans.Usage", usageBans );
+			break;
+		case Equip:
+			equipBans.add( configString );
+			config.set( "Bans.Equip", equipBans );
 			break;
 		case Crafting:
 			craftingBans.add( configString );
@@ -302,7 +314,7 @@ public class ConfigStore {
 	public void removeBan(CommandSender sender, ActionType actionType, String configString) {
 			// Check valid actionType
 			if( actionType == null ) {
-				sender.sendMessage( "Invalid ban type. Valid ban types: Usage, Ownership, World" );
+				sender.sendMessage( "Invalid ban type. Valid ban types: Usage, Equip, Crafting, Ownership, World" );
 				return;
 			}
 			
@@ -316,6 +328,10 @@ public class ConfigStore {
 			case Usage:
 				usageBans.remove( configString );
 				config.set( "Bans.Usage", usageBans );
+				break;
+			case Equip:
+				equipBans.remove( configString );
+				config.set( "Bans.Equip", equipBans );
 				break;
 			case Crafting:
 				craftingBans.remove( configString );
