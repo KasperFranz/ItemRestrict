@@ -62,7 +62,7 @@ public class QuickStore {
 		int freeSlot = 0;
 		ItemStack item = player.getInventory().getItem(itemSlot);
 		
-		for (int i = 9; i < 36; i++) {
+		for (int i = 9; i <= 36; i++) {
 			if ( player.getInventory().getItem(i) == null ) {
 				invSpace = 1;
 				freeSlot= i;
@@ -75,6 +75,7 @@ public class QuickStore {
 			notifyBan( player, item );
 		}
 		else {
+			player.getInventory().setItem( itemSlot, null );
 			player.getWorld().dropItemNaturally( player.getLocation(), item );
 			player.sendMessage( "You are not allowed to equip this item and your internal inventory is full." );
 		}
@@ -108,33 +109,7 @@ public class QuickStore {
 						if( cStore.isBannable( player, item, ActionType.Equip ) ) {
 							itemUnequip( player, i );
 						}
-					}
-					
-				//	ItemStack helmet = inventory.getHelmet();
-				//	ItemStack chestplate = inventory.getChestplate();
-				//	ItemStack leggings = inventory.getLeggings();
-				//	ItemStack boots = inventory.getBoots();
-					
-				//	if ( helmet != null && cStore.isBannable( player, helmet, ActionType.Equip ) ) {
-				//		inventory.setHelmet( null );
-				//		player.getWorld().dropItemNaturally( player.getLocation(), helmet);
-				//		notifyBan( player, helmet );
-				//	}					
-				//	if ( chestplate != null && cStore.isBannable( player, chestplate, ActionType.Equip ) ) {
-				//		inventory.setChestplate( null );
-				//		player.getWorld().dropItemNaturally( player.getLocation(), chestplate);
-				//		notifyBan( player, chestplate );
-				//	}					
-				//	if ( leggings != null && cStore.isBannable( player, leggings, ActionType.Equip ) ) {
-				//		inventory.setLeggings( null );
-				//		player.getWorld().dropItemNaturally( player.getLocation(), leggings);	
-				//		notifyBan( player, leggings );					
-				//	}
-				//	if ( boots != null && cStore.isBannable( player, boots, ActionType.Equip ) ) {
-				//		inventory.setBoots( null );
-				//		player.getWorld().dropItemNaturally( player.getLocation(), boots);	
-				//		notifyBan( player, boots );					
-				//	}					
+					}				
 				}
 			}
 
