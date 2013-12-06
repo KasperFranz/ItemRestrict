@@ -56,6 +56,30 @@ public class QuickStore {
 		});
 	}
 	
+	public void itemUnequip( final Player player, final int itemSlot ) {
+		
+		int invSpace = 0;
+		int freeSlot = 0;
+		ItemStack item = player.getInventory().getItem(itemSlot);
+		
+		for (int i = 9; i < 36; i++) {
+			if ( player.getInventory().getItem(i) == null ) {
+				invSpace = 1;
+				freeSlot= i;
+				break;
+			}
+		}
+		if ( invSpace == 1 ) {
+			player.getInventory().setItem( itemSlot, null );
+			player.getInventory().setItem( freeSlot, item );
+			notifyBan( player, item );
+		}
+		else {
+			player.getWorld().dropItemNaturally( player.getLocation(), item );
+			player.sendMessage( "You are not allowed to equip this item and your internal inventory is full." );
+		}
+	}
+	
 	public void scanInventory( final Player player ) {
 		if( cStore.getBanListSize( ActionType.Ownership ) == 0 && cStore.getBanListSize( ActionType.Equip ) == 0 ) return;
 		//no need, only makes servers susceptible for crashes 
@@ -67,46 +91,50 @@ public class QuickStore {
 					for( int i = 0; i < items.length; i++ ) {
 						if( cStore.isBannable( player, items[i] , ActionType.Ownership ) )
 							inventory.setItem( i, null );
-							//eListener.notifyBan( player, items[i] ); ###### -> doesn´t work atm ########
+							//notifyBan( player, items[i] );
 					}
 				}
 				
 				if ( cStore.getBanListSize( ActionType.Equip ) != 0 ) {
 					
-					for(int i = 0; i < 8; i++) {
+					for(int i = 0; i <= 8; i++) {
 						ItemStack item = player.getInventory().getItem(i);
 						if( cStore.isBannable( player, item, ActionType.Equip ) ) {
-						player.getInventory().setItem( i, null );
-						player.getWorld().dropItemNaturally( player.getLocation(), item );
-						notifyBan( player, item );
+							itemUnequip( player, i );
+						}
+					}
+					for(int i = 36; i <= 39; i++) {
+						ItemStack item = player.getInventory().getItem(i);
+						if( cStore.isBannable( player, item, ActionType.Equip ) ) {
+							itemUnequip( player, i );
 						}
 					}
 					
-					ItemStack helmet = inventory.getHelmet();
-					ItemStack chestplate = inventory.getChestplate();
-					ItemStack leggings = inventory.getLeggings();
-					ItemStack boots = inventory.getBoots();
+				//	ItemStack helmet = inventory.getHelmet();
+				//	ItemStack chestplate = inventory.getChestplate();
+				//	ItemStack leggings = inventory.getLeggings();
+				//	ItemStack boots = inventory.getBoots();
 					
-					if ( helmet != null && cStore.isBannable( player, helmet, ActionType.Equip ) ) {
-						inventory.setHelmet( null );
-						player.getWorld().dropItemNaturally( player.getLocation(), helmet);
-						notifyBan( player, helmet );
-					}					
-					if ( chestplate != null && cStore.isBannable( player, chestplate, ActionType.Equip ) ) {
-						inventory.setChestplate( null );
-						player.getWorld().dropItemNaturally( player.getLocation(), chestplate);
-						notifyBan( player, chestplate );
-					}					
-					if ( leggings != null && cStore.isBannable( player, leggings, ActionType.Equip ) ) {
-						inventory.setLeggings( null );
-						player.getWorld().dropItemNaturally( player.getLocation(), leggings);	
-						notifyBan( player, leggings );					
-					}
-					if ( boots != null && cStore.isBannable( player, boots, ActionType.Equip ) ) {
-						inventory.setBoots( null );
-						player.getWorld().dropItemNaturally( player.getLocation(), boots);	
-						notifyBan( player, boots );					
-					}					
+				//	if ( helmet != null && cStore.isBannable( player, helmet, ActionType.Equip ) ) {
+				//		inventory.setHelmet( null );
+				//		player.getWorld().dropItemNaturally( player.getLocation(), helmet);
+				//		notifyBan( player, helmet );
+				//	}					
+				//	if ( chestplate != null && cStore.isBannable( player, chestplate, ActionType.Equip ) ) {
+				//		inventory.setChestplate( null );
+				//		player.getWorld().dropItemNaturally( player.getLocation(), chestplate);
+				//		notifyBan( player, chestplate );
+				//	}					
+				//	if ( leggings != null && cStore.isBannable( player, leggings, ActionType.Equip ) ) {
+				//		inventory.setLeggings( null );
+				//		player.getWorld().dropItemNaturally( player.getLocation(), leggings);	
+				//		notifyBan( player, leggings );					
+				//	}
+				//	if ( boots != null && cStore.isBannable( player, boots, ActionType.Equip ) ) {
+				//		inventory.setBoots( null );
+				//		player.getWorld().dropItemNaturally( player.getLocation(), boots);	
+				//		notifyBan( player, boots );					
+				//	}					
 				}
 			}
 

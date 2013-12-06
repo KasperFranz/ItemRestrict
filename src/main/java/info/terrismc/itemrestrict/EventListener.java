@@ -239,8 +239,10 @@ public class EventListener implements Listener {
 				}
 				else if( item != null && cStore.isBannable( player, item, ActionType.Equip ) ) {
 					qStore.notifyBan( player, item );
-					player.getInventory().setItem( slotId, null );
-					player.getWorld().dropItemNaturally( player.getLocation(), item );
+					qStore.scanInventory( player );
+					//qStore.itemUnequip( player, slotId );
+					//player.getInventory().setItem( slotId, null );
+					//player.getWorld().dropItemNaturally( player.getLocation(), item );
 				}
 			}
 		//});
