@@ -5,7 +5,7 @@
     <artifactId>ItemRestrict</artifactId>
     <version>1.5.0-SNAPSHOT</version>
     <name>ItemRestrict</name>
-    <url>http://iongaming.org</url>
+    <url>https://github.com/KasperFranz/ItemRestrict</url>
     <packaging>jar</packaging>
     <description>Ban items and blocks for Bukkit, Tekkit, and FTB servers using the Bukkit API</description>
 
@@ -18,13 +18,24 @@
             <id>bukkit-repo</id>
             <url>http://repo.bukkit.org/content/groups/public</url>
         </repository>
+        <repository>
+            <id>Plugin Metrics</id>
+            <url>http://repo.mcstats.org/content/repositories/public</url>
+        </repository>
     </repositories>
 
     <dependencies>
         <dependency>
             <groupId>org.bukkit</groupId>
             <artifactId>bukkit</artifactId>
-            <version>1.6.4-R0.1-SNAPSHOT</version>
+            <version>RELEASE</version>
+            <type>jar</type>
+        </dependency>
+        <dependency>
+            <groupId>org.mcstats.bukkit</groupId>
+            <artifactId>metrics</artifactId>
+            <version>R8-SNAPSHOT</version>
+            <scope>compile</scope>
         </dependency>
     </dependencies>
 
@@ -53,7 +64,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>2.3.2</version>
+                <version>2.5.1</version>
                 <configuration>
                     <showDeprecation>true</showDeprecation>
                     <source>1.7</source>
