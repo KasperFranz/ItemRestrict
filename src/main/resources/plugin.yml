@@ -24,6 +24,10 @@ commands:
     description: Removes from the ban list
     usage: /ires unban <banType> <id-datavalue>
     permission: itemrestrict.ban
+  ires hand:
+    description: get the name of the item in  your hand.
+    usage: /ires hand
+    permission: itemrestrict.hand
 permissions:
   itemrestrict.*:
     description: Grants all administrative privileges.
@@ -35,6 +39,7 @@ permissions:
       itemrestrict.help: true
       itemrestrict.reload: true
       itemrestrict.ban: true
+      itemrestrict.hand: true
   itemrestrict.help:
       description: Grants permission to access help root
       default: op
@@ -43,4 +48,7 @@ permissions:
       default: op
   itemrestrict.ban:
       description: Grants permission to modify the ban list
+      default: op
+  itemrestrict.hand:
+      description: Grants permission to give information about whats in your hand.
       default: op

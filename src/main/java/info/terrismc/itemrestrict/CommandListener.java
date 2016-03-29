@@ -23,6 +23,12 @@ public class CommandListener implements CommandExecutor {
                     sender.sendMessage("ItemRestrict Config Reloaded");
                     return true;
                 }
+
+            case "hand":
+                if (args.length == 1) {
+                    cStore.getInformationInHand(sender);
+                    return true;
+                }
             case "ban":
                 if (args.length == 3) {
                     cStore.addBan(sender, getActionType(args[1]), args[2]);
