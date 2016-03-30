@@ -1,2 +1,2 @@
 # Item Restrict
-A plugin to hlep you ban items and blocks (also modded) without any problems 
+Ban items and blocks for Bukkit, Tekkit, and FTB servers using the Bukkit API
