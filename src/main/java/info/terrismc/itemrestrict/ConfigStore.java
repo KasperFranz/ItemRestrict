@@ -264,7 +264,7 @@ public class ConfigStore {
     private String getConfigString(ItemStack item) {
         // Config version string of item id and data value
         MaterialData matData = item.getData();
-        return "" + item.getType().toString() + ":" + matData.getData();
+        return "" + item.getType().toString() + "-" + matData.getData();
     }
 
     @SuppressWarnings("deprecation")
