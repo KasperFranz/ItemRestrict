@@ -1,6 +1,7 @@
 package info.terrismc.itemrestrict;
 
 import java.util.List;
+import java.util.logging.Level;
 
 import org.bukkit.World;
 import org.bukkit.block.Block;
@@ -12,7 +13,7 @@ import org.bukkit.material.MaterialData;
 
 public class ConfigStore {
 
-    private ItemRestrict plugin;
+    private final ItemRestrict plugin;
     private FileConfiguration config;
 
     // Cache config values
@@ -221,7 +222,7 @@ public class ConfigStore {
                 return "World";
             default:
                 // Should never reach here if all enum cases covered
-                ItemRestrict.logger.warning("Unknown ActionType detected: " + actionType.toString());
+                ItemRestrict.logger.log(Level.WARNING, "Unknown ActionType detected: {0}", actionType.toString());
                 return "";
         }
     }
@@ -296,7 +297,7 @@ public class ConfigStore {
                 return worldBans.size();
         }
         // Should never reach here if all enum cases covered
-        ItemRestrict.logger.warning("Unknown ActionType detected: " + actionType.toString());
+        ItemRestrict.logger.log(Level.WARNING, "Unknown ActionType detected: {0}", actionType.toString());
         return 0;
     }
 
@@ -336,7 +337,7 @@ public class ConfigStore {
                 break;
             default:
                 // Should never reach here if all enum cases covered
-                ItemRestrict.logger.warning("Unknown ActionType detected: " + actionType.toString());
+                ItemRestrict.logger.log(Level.WARNING, "Unknown ActionType detected: {0}", actionType.toString());
                 return;
         }
         plugin.saveConfig();
@@ -379,7 +380,7 @@ public class ConfigStore {
                 break;
             default:
                 // Should never reach here if all enum cases covered
-                ItemRestrict.logger.warning("Unknown ActionType detected: " + actionType.toString());
+                ItemRestrict.logger.log(Level.WARNING, "Unknown ActionType detected: {0}", actionType.toString());
                 return;
         }
         plugin.saveConfig();

@@ -26,9 +26,9 @@ import org.bukkit.event.world.ChunkLoadEvent;
 import org.bukkit.inventory.ItemStack;
 
 public class EventListener implements Listener {
-	private QuickStore qStore;
-	private ConfigStore cStore;
-	private Random rand;
+	private final QuickStore qStore;
+	private final ConfigStore cStore;
+	private final Random rand;
 	
 	public EventListener( ItemRestrict plugin ) {
 		this.cStore = plugin.cStore;
@@ -229,7 +229,7 @@ public class EventListener implements Listener {
 				// When a player switches item in hand
 				Player player = event.getPlayer();
 				int slotId = event.getNewSlot();
-				ItemStack item = player.getInventory().getItem( slotId );;
+				ItemStack item = player.getInventory().getItem( slotId );
 				
 				// Check ownership bannable and world
 				if( item != null && cStore.isBannable( player, item, ActionType.Ownership ) ) {				
