@@ -6,12 +6,13 @@ import org.bukkit.command.CommandSender;
 
 public class CommandListener implements CommandExecutor {
 
-    private ConfigStore cStore;
+    private final ConfigStore cStore;
 
     public CommandListener(ItemRestrict plugin) {
         this.cStore = plugin.cStore;
     }
 
+    @Override
     public boolean onCommand(CommandSender sender, Command cmd, String alias, String[] args) {
         if (args.length == 0) {
             return false;

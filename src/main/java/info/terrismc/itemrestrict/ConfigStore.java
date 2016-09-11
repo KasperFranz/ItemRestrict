@@ -38,11 +38,12 @@ public class ConfigStore {
         // Config variables
         config = plugin.getConfig();
         worldList = config.getStringList("Worlds");
-        usageBans = config.getStringList("Bans.Usage");
-        equipBans = config.getStringList("Bans.Equip");
-        craftingBans = config.getStringList("Bans.Crafting");
-        ownershipBans = config.getStringList("Bans.Ownership");
-        worldBans = config.getStringList("Bans.World");
+        usageBans = toLowerCase(config.getStringList("Bans.Usage"));
+        
+        equipBans = toLowerCase(config.getStringList("Bans.Equip"));
+        craftingBans = toLowerCase(config.getStringList("Bans.Crafting"));
+        ownershipBans = toLowerCase(config.getStringList("Bans.Ownership"));
+        worldBans = toLowerCase(config.getStringList("Bans.World"));
     }
 
     public boolean hasPermission(CommandSender sender, String node, boolean allowConsole) {
@@ -66,7 +67,7 @@ public class ConfigStore {
     }
 
     public boolean isBanned(Block block, ActionType actionType) {
-        boolean banned = isBanned(getConfigStringOld(block), actionType);
+        boolean banned = isBanned(getConfigString(block), actionType);
         if (!banned) {
             banned = isBanned(getConfigStringParent(block), actionType);
         }
@@ -74,7 +75,7 @@ public class ConfigStore {
     }
 
     public boolean isBanned(ItemStack item, ActionType actionType) {
-        boolean banned = isBanned(getConfigStringOld(item), actionType);
+        boolean banned = isBanned(getConfigString(item), actionType);
         if (!banned) {
             banned = isBanned(getConfigStringParent(item), actionType);
         }
@@ -85,15 +86,15 @@ public class ConfigStore {
         // Select proper HashMap
         switch (actionType) {
             case Usage:
-                return usageBans.contains(configString);
+                return usageBans.contains(configString.toLowerCase());
             case Equip:
-                return equipBans.contains(configString);
+                return equipBans.contains(configString.toLowerCase());
             case Crafting:
-                return craftingBans.contains(configString);
+                return craftingBans.contains(configString.toLowerCase());
             case Ownership:
-                return ownershipBans.contains(configString);
+                return ownershipBans.contains(configString.toLowerCase());
             case World:
-                return worldBans.contains(configString);
+                return worldBans.contains(configString.toLowerCase());
             default:
                 // Should never reach here if all enum cases covered
                 ItemRestrict.logger.warning("Unknown ActionType detected: " + actionType.toString());
@@ -115,7 +116,7 @@ public class ConfigStore {
             }
 
             // Check exclude permission
-            if (player.hasPermission("ItemRestrict.bypass." + getActionTypeString(actionType) + "." + getConfigStringOld(item))) {
+            if (player.hasPermission("ItemRestrict.bypass." + getActionTypeString(actionType) + "." + getConfigString(item))) {
                 return false;
             }
 
@@ -143,7 +144,7 @@ public class ConfigStore {
             }
 
             // Check exclude permission
-            if (player.hasPermission("ItemRestrict.bypass." + getActionTypeString(actionType) + "." + getConfigStringOld(block))) {
+            if (player.hasPermission("ItemRestrict.bypass." + getActionTypeString(actionType) + "." + getConfigString(block))) {
                 return false;
             }
 
@@ -158,7 +159,7 @@ public class ConfigStore {
     }
 
     public String getLabel(Block block) {
-        String label = config.getString("Messages.labels." + getConfigStringOld(block));
+        String label = config.getString("Messages.labels." + getConfigString(block));
         if (label != null) {
             return label.replace("&", "�");
         }
@@ -166,11 +167,11 @@ public class ConfigStore {
         if (label != null) {
             return label.replace("&", "�");
         }
-        return block.getType().name() + " (" + getConfigStringOld(block) + ")";
+        return block.getType().name() + " (" + getConfigString(block) + ")";
     }
 
     public String getLabel(ItemStack item) {
-        String label = config.getString("Messages.labels." + getConfigStringOld(item));
+        String label = config.getString("Messages.labels." + getConfigString(item));
         if (label != null) {
             return label.replace("&", "�");
         }
@@ -178,11 +179,11 @@ public class ConfigStore {
         if (label != null) {
             return label.replace("&", "�");
         }
-        return item.getType().name() + " (" + getConfigStringOld(item) + ")";
+        return getConfigString(item);
     }
 
     public String getReason(Block block) {
-        String reason = config.getString("Messages.reasons." + getConfigStringOld(block));
+        String reason = config.getString("Messages.reasons." + getConfigString(block));
         if (reason != null) {
             return reason.replace("&", "�");
         }
@@ -194,7 +195,7 @@ public class ConfigStore {
     }
 
     public String getReason(ItemStack item) {
-        String reason = config.getString("Messages.reasons." + getConfigStringOld(item));
+        String reason = config.getString("Messages.reasons." + getConfigString(item));
         if (reason != null) {
             return reason.replace("&", "�");
         }
@@ -251,19 +252,6 @@ public class ConfigStore {
         // Config version string of block id 
         return "" + block.getTypeId();
     }
-
-    @SuppressWarnings("deprecation")
-    private String getConfigStringOld(ItemStack item) {
-        // Config version string of item id and data value
-        MaterialData matData = item.getData();
-        return "" + matData.getItemTypeId() + "-" + matData.getData();
-    }
-    
-        @SuppressWarnings("deprecation")
-    private String getConfigStringOld(Block block) {
-        // Config version string of block id and data value 
-        return "" + block.getTypeId() + "-" + block.getData();
-    }
     
      @SuppressWarnings("deprecation")
     private String getConfigString(Block block) {
@@ -276,13 +264,13 @@ public class ConfigStore {
     private String getConfigString(ItemStack item) {
         // Config version string of item id and data value
         MaterialData matData = item.getData();
-        return "" + matData.getItemTypeId() + "-" + matData.getData();
+        return "" + item.getType().toString() + ":" + matData.getData();
     }
 
     @SuppressWarnings("deprecation")
     private String getConfigStringParent(ItemStack item) {
         // Config version string of item id and data value
-        return "" + item.getTypeId();
+        return "" + item.getType().toString();
     }
 
     public double getScanFrequencyOnPlayerJoin() {
@@ -405,5 +393,12 @@ public class ConfigStore {
         }else{
             sender.sendMessage("you need to be a player to get this information");
         }
+    }
+
+    private List<String> toLowerCase(List<String> stringList) {
+        for(int i = 0; i<stringList.size(); i++){
+            stringList.set(i, stringList.get(i).toLowerCase());
+        }
+        return stringList;
     }
 }
