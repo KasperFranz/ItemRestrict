@@ -13,8 +13,9 @@ Use the command &quot;/ires reload&quot; to reload the config file.
 | **Command** | **Permission Node** | **Description** |
 | --- | --- | --- |
 | /ires reload | itemrestrict.reload | Reload the config |
-| /ires ban &lt;banType&gt; &lt;id-datavalue&gt; | itemrestrict.ban | Add item to the ban list |
-| /ires unban &lt;banType&gt; &lt;id-datavalue&gt; | itemrestrict.ban | Remove item from the ban list |
+| /ires hand | itemrestrict.hand | gives you the name (and datavalue) of the item in hand |
+| /ires ban \<banType> \<name-datavalue> | itemrestrict.ban | Add item to the ban list |
+| /ires unban \<banType> \<name-datavalue> | itemrestrict.ban | Remove item from the ban list |
 
 # Configuration
 
