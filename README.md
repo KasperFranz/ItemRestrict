@@ -25,9 +25,11 @@ Worlds listed in the Worlds section are enabled worlds which will be checked by 
 
 The Scanner settings indicate the percentage chance (from 0 to 1) that it scans a loaded player or a loaded chunk.
 
-You can specify the items you wish to ban under the Bans section. Take a look at the different types of bans below. An entry with only the item id (32) will specify ALL wool (all datavalues). An entry with the item id and datavalue separated by a dash (32-2) specifies MAGENTA wool (datavalue 2). Some items have a different values in your inventory as opposed to ones place in the world (eg. a door item in the inventory versus a placed door in the world). A full list of  [**Block IDs**](http://minecraft-ids.grahamedgecombe.com/) will help you add banned items.
+~~You can specify the items you wish to ban under the Bans section. Take a look at the different types of bans below. An entry with only the item id (32) will specify ALL wool (all datavalues). An entry with the item id and datavalue separated by a dash (32-2) specifies MAGENTA wool (datavalue 2). Some items have a different values in your inventory as opposed to ones place in the world (eg. a door item in the inventory versus a placed door in the world). A full list of  [**Block IDs**](http://minecraft-ids.grahamedgecombe.com/) will help you add banned items.~~
 
 The label gives the item a name when notifying the player. The reason provides the reason of why the item was banned for them. You can use colour with both the label and the reason by using the escape character &quot;&amp;&quot; and a hex number corresponding to the  [**minecraft colour**](http://ess.khhq.net/mc/).
+
+This has to be updated as this information is no longer valid!!!
 
 # Permissions
 
