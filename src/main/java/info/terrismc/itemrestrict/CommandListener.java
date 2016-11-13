@@ -1,7 +1,5 @@
 package info.terrismc.itemrestrict;
 
-import java.util.Enumeration;
-
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -47,11 +45,11 @@ public class CommandListener implements CommandExecutor {
     }
 
     private ActionType getActionType(String actionTypeString) {
-    	for(final ActionType xType : ActionType.values())
+    	for(final ActionType type : ActionType.values())
     	{
-    		if(xType.name().compareToIgnoreCase(actionTypeString) == 0)
+    		if(type.name().compareToIgnoreCase(actionTypeString) == 0)
     		{
-    			return xType;
+    			return type;
     		}
     	}
     	return null;

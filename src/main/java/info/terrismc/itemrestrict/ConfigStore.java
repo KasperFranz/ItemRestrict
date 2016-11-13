@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.logging.Level;
 
 import org.bukkit.World;
@@ -22,7 +21,7 @@ public class ConfigStore {
 
     // Cache config values
     private List<String> worldList;
-    private final Map<ActionType, List<String>> k_mapBans = new HashMap<>();
+    private final Map<ActionType, List<String>> bans = new HashMap<>();
 
     public ConfigStore(ItemRestrict plugin) {
         this.plugin = plugin;
@@ -40,16 +39,16 @@ public class ConfigStore {
         config = plugin.getConfig();
         worldList = config.getStringList("Worlds");
 
-        for(final ActionType xType : ActionType.values())
+        for(final ActionType type : ActionType.values())
         {
-        	if(!k_mapBans.containsKey(xType.name()))
+        	if(!bans.containsKey(type.name()))
         	{
-        		k_mapBans.put(xType, new ArrayList<String>());
+        		bans.put(type, new ArrayList<String>());
         	}
 
-        	final List<String> lstValues = k_mapBans.get(xType);
-        	lstValues.clear();
-        	lstValues.addAll(toLowerCase(config.getStringList("Bans." + xType.name())));
+        	final List<String> values = bans.get(type);
+        	values.clear();
+        	values.addAll(toLowerCase(config.getStringList("Bans." + type.name())));
         }
     }
 
@@ -89,9 +88,9 @@ public class ConfigStore {
         return banned;
     }
 
-    private boolean isBanned(final String strConfigString, final ActionType xActionType)
+    private boolean isBanned(final String configString, final ActionType actionType)
     {
-    	return k_mapBans.containsKey(xActionType) && k_mapBans.get(xActionType).contains(strConfigString.toLowerCase());
+    	return bans.containsKey(actionType) && bans.get(actionType).contains(configString.toLowerCase());
     }
 
     public boolean isBannable(Player player, ItemStack item, ActionType actionType) {
@@ -224,26 +223,26 @@ public class ConfigStore {
      * A configuration string consists of a string followed by an optional hyphen '-' and a number
      * Example: WOOL-5
      * 
-     * @param strConfig string to check
+     * @param config string to check
      * @return true if strConfig is a configuration string, false otherwise
      */
-    private boolean isConfigString(final String strConfig)
+    private boolean isConfigString(final String config)
     {
-    	final int iDashIndex = strConfig.indexOf('-');
-    	final String strName = (iDashIndex < 0 ? strConfig : strConfig.substring(0, iDashIndex));
-    	final String strDataValue = (iDashIndex < 0 ? "0" : strConfig.substring(iDashIndex + 1));
+    	final int dashIndex = config.indexOf('-');
+    	final String name = (dashIndex < 0 ? config : config.substring(0, dashIndex));
+    	final String dataValue = (dashIndex < 0 ? "0" : config.substring(dashIndex + 1));
 
     	// TODO (k4su: 07.11.16): eventually replace by regex
     	try
     	{
-    		Integer.parseInt(strDataValue);
+    		Integer.parseInt(dataValue);
     	}
-    	catch(final NumberFormatException xException)
+    	catch(final NumberFormatException exception)
     	{
     		return false;
     	}
 
-    	return (strName.length() > 0);
+    	return (name.length() > 0);
     }
 
 
@@ -268,7 +267,6 @@ public class ConfigStore {
         return ("" + item.getType().toString() + "-" + matData.getData()).toLowerCase();
     }
 
-    @SuppressWarnings("deprecation")
     private String getConfigStringParent(ItemStack item) {
         // Config version string of item id and data value
         return ("" + item.getType().toString()).toLowerCase();
@@ -284,95 +282,95 @@ public class ConfigStore {
 
     /** \brief get the size of bans for the actiontype
      * 
-     * @param xActionType actiontype to get banlength
+     * @param actionType actiontype to get banlength
      * @return amount of bans for xActionType
      */
-    public int getBanListSize(final ActionType xActionType)
+    public int getBanListSize(final ActionType actionType)
     {
-    	if(k_mapBans.containsKey(xActionType))
+    	if(bans.containsKey(actionType))
     	{
-    		return k_mapBans.get(xActionType).size();
+    		return bans.get(actionType).size();
     	}
     	else
     	{
-    		ItemRestrict.logger.log(Level.WARNING, "Unknown ActionType detected: {0}", xActionType.name());
+    		ItemRestrict.logger.log(Level.WARNING, "Unknown ActionType detected: {0}", actionType.name());
     		return 0;
     	}
     }
 
     /** \brief add a ban for a specified usage
      * 
-     * @param xSender          sender who called the command
-     * @param xActionType      usage type for the ban
-     * @param strConfigString  name of the item (incl. data after dash '-')
+     * @param sender          sender who called the command
+     * @param actionType      usage type for the ban
+     * @param configString  name of the item (incl. data after dash '-')
      */
-    public void addBan(final CommandSender xSender, final ActionType xActionType, final String strConfigString) {
+    public void addBan(final CommandSender sender, final ActionType actionType, final String configString) {
         // Check valid actionType
-        if (xActionType == null) {
-            xSender.sendMessage("Invalid ban type. Valid ban types: Usage, Equip, Crafting, Ownership, World");
+        if (actionType == null) {
+            sender.sendMessage("Invalid ban type. Valid ban types: Usage, Equip, Crafting, Ownership, World");
             return;
         }
 
         // Check valid config string
-        if (!isConfigString(strConfigString)) {
-            xSender.sendMessage(strConfigString + "  is not a valid item");
+        if (!isConfigString(configString)) {
+            sender.sendMessage(configString + "  is not a valid item");
             return;
         }
 
-        if(k_mapBans.containsKey(xActionType))
+        if(bans.containsKey(actionType))
         {
-			final List<String> lstBans = k_mapBans.get(xActionType);
+			final List<String> typeBans = bans.get(actionType);
 			// only add if not yet added
-			if(!lstBans.contains(strConfigString))
+			if(!typeBans.contains(configString))
 			{
-				lstBans.add(strConfigString.toLowerCase());
+				typeBans.add(configString.toLowerCase());
 			}
-			config.set("Bans." + xActionType.name(), lstBans);
+			config.set("Bans." + actionType.name(), typeBans);
         }
         else
         {
             // Should never reach here if all enum cases covered
-            ItemRestrict.logger.log(Level.WARNING, "Unknown ActionType detected: {0}", xActionType.toString());
+            ItemRestrict.logger.log(Level.WARNING, "Unknown ActionType detected: {0}", actionType.toString());
             return;
         }
         plugin.saveConfig();
-        xSender.sendMessage("Item Banned");
+        sender.sendMessage("Item Banned");
     }
 
     /** \brief remove a ban for a specified usage
      * 
-     * @param xSender          sender who called the command
-     * @param xActionType      usage type for the ban
-     * @param strConfigString  name of the item (incl. data after dash '-')
+     * @param sender          sender who called the command
+     * @param actionType      usage type for the ban
+     * @param configString  name of the item (incl. data after dash '-')
      */
-    public void removeBan(final CommandSender xSender, final ActionType xActionType, final String strConfigString) {
+    public void removeBan(final CommandSender sender, final ActionType actionType, final String configString) {
         // Check valid actionType
-        if (xActionType == null) {
-            xSender.sendMessage("Invalid ban type. Valid ban types: Usage, Equip, Crafting, Ownership, World");
+        if (actionType == null) {
+            sender.sendMessage("Invalid ban type. Valid ban types: Usage, Equip, Crafting, Ownership, World");
             return;
         }
 
         // Check valid config string
-        if (!isConfigString(strConfigString)) {
-            xSender.sendMessage(strConfigString + " is not a valid item");
+        if (!isConfigString(configString)) {
+            sender.sendMessage(configString + " is not a valid item");
             return;
         }
 
-        if(k_mapBans.containsKey(xActionType))
+        if(bans.containsKey(actionType))
         {
-			final List<String> lstBans = k_mapBans.get(xActionType);
-			lstBans.remove(strConfigString.toLowerCase());
-			config.set("Bans." + xActionType.name(), lstBans);
+			final List<String> typeBans = bans.get(actionType);
+			typeBans.remove(configString.toLowerCase());
+			config.set("Bans." + actionType.name(), typeBans);
         }
         else
         {
             // Should never reach here if all enum cases covered
-            ItemRestrict.logger.log(Level.WARNING, "Unknown ActionType detected: {0}", xActionType.toString());
+            ItemRestrict.logger.log(Level.WARNING, "Unknown ActionType detected: {0}", actionType.toString());
             return;
         }
 
         plugin.saveConfig();
-        xSender.sendMessage("Item Unbanned");
+        sender.sendMessage("Item Unbanned");
     }
 
     public void getInformationInHand(CommandSender sender) {
