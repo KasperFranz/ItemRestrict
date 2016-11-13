@@ -1,6 +1,9 @@
 package info.terrismc.itemrestrict;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 
 import org.bukkit.World;
@@ -18,11 +21,7 @@ public class ConfigStore {
 
     // Cache config values
     private List<String> worldList;
-    private List<String> usageBans;
-    private List<String> equipBans;
-    private List<String> craftingBans;
-    private List<String> ownershipBans;
-    private List<String> worldBans;
+    private final Map<ActionType, List<String>> bans = new HashMap<>();
 
     public ConfigStore(ItemRestrict plugin) {
         this.plugin = plugin;
@@ -39,12 +38,18 @@ public class ConfigStore {
         // Config variables
         config = plugin.getConfig();
         worldList = config.getStringList("Worlds");
-        usageBans = toLowerCase(config.getStringList("Bans.Usage"));
-        
-        equipBans = toLowerCase(config.getStringList("Bans.Equip"));
-        craftingBans = toLowerCase(config.getStringList("Bans.Crafting"));
-        ownershipBans = toLowerCase(config.getStringList("Bans.Ownership"));
-        worldBans = toLowerCase(config.getStringList("Bans.World"));
+
+        for(final ActionType type : ActionType.values())
+        {
+        	if(!bans.containsKey(type.name()))
+        	{
+        		bans.put(type, new ArrayList<String>());
+        	}
+
+        	final List<String> values = bans.get(type);
+        	values.clear();
+        	values.addAll(toLowerCase(config.getStringList("Bans." + type.name())));
+        }
     }
 
     public boolean hasPermission(CommandSender sender, String node, boolean allowConsole) {
@@ -83,24 +88,9 @@ public class ConfigStore {
         return banned;
     }
 
-    private boolean isBanned(String configString, ActionType actionType) {
-        // Select proper HashMap
-        switch (actionType) {
-            case Usage:
-                return usageBans.contains(configString.toLowerCase());
-            case Equip:
-                return equipBans.contains(configString.toLowerCase());
-            case Crafting:
-                return craftingBans.contains(configString.toLowerCase());
-            case Ownership:
-                return ownershipBans.contains(configString.toLowerCase());
-            case World:
-                return worldBans.contains(configString.toLowerCase());
-            default:
-                // Should never reach here if all enum cases covered
-                ItemRestrict.logger.warning("Unknown ActionType detected: " + actionType.toString());
-                return false;
-        }
+    private boolean isBanned(final String configString, final ActionType actionType)
+    {
+    	return bans.containsKey(actionType) && bans.get(actionType).contains(configString.toLowerCase());
     }
 
     public boolean isBannable(Player player, ItemStack item, ActionType actionType) {
@@ -162,11 +152,11 @@ public class ConfigStore {
     public String getLabel(Block block) {
         String label = config.getString("Messages.labels." + getConfigString(block));
         if (label != null) {
-            return label.replace("&", "�");
+            return label.replace('&', '\u00A7');
         }
         label = config.getString("Messages.labels." + getConfigStringParent(block));
         if (label != null) {
-            return label.replace("&", "�");
+            return label.replace('&', '\u00A7');
         }
         return block.getType().name() + " (" + getConfigString(block) + ")";
     }
@@ -174,11 +164,11 @@ public class ConfigStore {
     public String getLabel(ItemStack item) {
         String label = config.getString("Messages.labels." + getConfigString(item));
         if (label != null) {
-            return label.replace("&", "�");
+            return label.replace('&', '\u00A7');
         }
         label = config.getString("Messages.labels." + getConfigStringParent(item));
         if (label != null) {
-            return label.replace("&", "�");
+            return label.replace('&', '\u00A7');
         }
         return getConfigString(item);
     }
@@ -186,11 +176,11 @@ public class ConfigStore {
     public String getReason(Block block) {
         String reason = config.getString("Messages.reasons." + getConfigString(block));
         if (reason != null) {
-            return reason.replace("&", "�");
+            return reason.replace('&', '\u00A7');
         }
         reason = config.getString("Messages.reasons." + getConfigStringParent(block));
         if (reason != null) {
-            return reason.replace("&", "�");
+            return reason.replace('&', '\u00A7');
         }
         return "Ask your server administrator.";
     }
@@ -198,11 +188,11 @@ public class ConfigStore {
     public String getReason(ItemStack item) {
         String reason = config.getString("Messages.reasons." + getConfigString(item));
         if (reason != null) {
-            return reason.replace("&", "�");
+            return reason.replace('&', '\u00A7');
         }
         reason = config.getString("Messages.reasons." + getConfigStringParent(item));
         if (reason != null) {
-            return reason.replace("&", "�");
+            return reason.replace('&', '\u00A7');
         }
         return "Ask your server administrator.";
     }
@@ -227,23 +217,32 @@ public class ConfigStore {
         }
     }
 
-    private boolean isConfigString(String configString) {
-        String[] magicNumbers = configString.split("-");
+    /** \brief Checks if a string validates as configuration string
+     * 
+     * Checks if a string validates as configuration string.
+     * A configuration string consists of a string followed by an optional hyphen '-' and a number
+     * Example: WOOL-5
+     * 
+     * @param config string to check
+     * @return true if strConfig is a configuration string, false otherwise
+     */
+    private boolean isConfigString(final String config)
+    {
+    	final int dashIndex = config.indexOf('-');
+    	final String name = (dashIndex < 0 ? config : config.substring(0, dashIndex));
+    	final String dataValue = (dashIndex < 0 ? "0" : config.substring(dashIndex + 1));
 
-        // Check partition amount
-        if (magicNumbers.length > 2) {
-            return false;
-        }
+    	// TODO (k4su: 07.11.16): eventually replace by regex
+    	try
+    	{
+    		Integer.parseInt(dataValue);
+    	}
+    	catch(final NumberFormatException exception)
+    	{
+    		return false;
+    	}
 
-        // Check for integers
-        for (String magicNumber : magicNumbers) {
-            try {
-                Integer.parseInt(magicNumber);
-            } catch (NumberFormatException e) {
-                return false;
-            }
-        }
-        return true;
+    	return (name.length() > 0);
     }
 
 
@@ -251,27 +250,26 @@ public class ConfigStore {
     @SuppressWarnings("deprecation")
     private String getConfigStringParent(Block block) {
         // Config version string of block id 
-        return "" + block.getTypeId();
+        return ("" + block.getTypeId()).toLowerCase();
     }
     
      @SuppressWarnings("deprecation")
     private String getConfigString(Block block) {
         // Config version string of item id and data value
         
-        return "" + block.getType().toString() + "-" + block.getData();
+        return ("" + block.getType().toString() + "-" + block.getData()).toLowerCase();
     }
     
     @SuppressWarnings("deprecation")
     private String getConfigString(ItemStack item) {
         // Config version string of item id and data value
         MaterialData matData = item.getData();
-        return "" + item.getType().toString() + "-" + matData.getData();
+        return ("" + item.getType().toString() + "-" + matData.getData()).toLowerCase();
     }
 
-    @SuppressWarnings("deprecation")
     private String getConfigStringParent(ItemStack item) {
         // Config version string of item id and data value
-        return "" + item.getType().toString();
+        return ("" + item.getType().toString()).toLowerCase();
     }
 
     public double getScanFrequencyOnPlayerJoin() {
@@ -282,26 +280,31 @@ public class ConfigStore {
         return config.getDouble("Scanner.event.onChunkLoad");
     }
 
-    public int getBanListSize(ActionType actionType) {
-        // Select proper HashMap
-        switch (actionType) {
-            case Usage:
-                return usageBans.size();
-            case Equip:
-                return equipBans.size();
-            case Crafting:
-                return craftingBans.size();
-            case Ownership:
-                return ownershipBans.size();
-            case World:
-                return worldBans.size();
-        }
-        // Should never reach here if all enum cases covered
-        ItemRestrict.logger.log(Level.WARNING, "Unknown ActionType detected: {0}", actionType.toString());
-        return 0;
+    /** \brief get the size of bans for the actiontype
+     * 
+     * @param actionType actiontype to get banlength
+     * @return amount of bans for xActionType
+     */
+    public int getBanListSize(final ActionType actionType)
+    {
+    	if(bans.containsKey(actionType))
+    	{
+    		return bans.get(actionType).size();
+    	}
+    	else
+    	{
+    		ItemRestrict.logger.log(Level.WARNING, "Unknown ActionType detected: {0}", actionType.name());
+    		return 0;
+    	}
     }
 
-    public void addBan(CommandSender sender, ActionType actionType, String configString) {
+    /** \brief add a ban for a specified usage
+     * 
+     * @param sender          sender who called the command
+     * @param actionType      usage type for the ban
+     * @param configString  name of the item (incl. data after dash '-')
+     */
+    public void addBan(final CommandSender sender, final ActionType actionType, final String configString) {
         // Check valid actionType
         if (actionType == null) {
             sender.sendMessage("Invalid ban type. Valid ban types: Usage, Equip, Crafting, Ownership, World");
@@ -314,37 +317,33 @@ public class ConfigStore {
             return;
         }
 
-        switch (actionType) {
-            case Usage:
-                usageBans.add(configString);
-                config.set("Bans.Usage", usageBans);
-                break;
-            case Equip:
-                equipBans.add(configString);
-                config.set("Bans.Equip", equipBans);
-                break;
-            case Crafting:
-                craftingBans.add(configString);
-                config.set("Bans.Crafting", craftingBans);
-                break;
-            case Ownership:
-                ownershipBans.add(configString);
-                config.set("Bans.Ownership", ownershipBans);
-                break;
-            case World:
-                worldBans.add(configString);
-                config.set("Bans.World", worldBans);
-                break;
-            default:
-                // Should never reach here if all enum cases covered
-                ItemRestrict.logger.log(Level.WARNING, "Unknown ActionType detected: {0}", actionType.toString());
-                return;
+        if(bans.containsKey(actionType))
+        {
+			final List<String> typeBans = bans.get(actionType);
+			// only add if not yet added
+			if(!typeBans.contains(configString))
+			{
+				typeBans.add(configString.toLowerCase());
+			}
+			config.set("Bans." + actionType.name(), typeBans);
+        }
+        else
+        {
+            // Should never reach here if all enum cases covered
+            ItemRestrict.logger.log(Level.WARNING, "Unknown ActionType detected: {0}", actionType.toString());
+            return;
         }
         plugin.saveConfig();
         sender.sendMessage("Item Banned");
     }
 
-    public void removeBan(CommandSender sender, ActionType actionType, String configString) {
+    /** \brief remove a ban for a specified usage
+     * 
+     * @param sender          sender who called the command
+     * @param actionType      usage type for the ban
+     * @param configString  name of the item (incl. data after dash '-')
+     */
+    public void removeBan(final CommandSender sender, final ActionType actionType, final String configString) {
         // Check valid actionType
         if (actionType == null) {
             sender.sendMessage("Invalid ban type. Valid ban types: Usage, Equip, Crafting, Ownership, World");
@@ -357,32 +356,19 @@ public class ConfigStore {
             return;
         }
 
-        switch (actionType) {
-            case Usage:
-                usageBans.remove(configString);
-                config.set("Bans.Usage", usageBans);
-                break;
-            case Equip:
-                equipBans.remove(configString);
-                config.set("Bans.Equip", equipBans);
-                break;
-            case Crafting:
-                craftingBans.remove(configString);
-                config.set("Bans.Crafting", craftingBans);
-                break;
-            case Ownership:
-                ownershipBans.remove(configString);
-                config.set("Bans.Ownership", ownershipBans);
-                break;
-            case World:
-                worldBans.remove(configString);
-                config.set("Bans.World", worldBans);
-                break;
-            default:
-                // Should never reach here if all enum cases covered
-                ItemRestrict.logger.log(Level.WARNING, "Unknown ActionType detected: {0}", actionType.toString());
-                return;
+        if(bans.containsKey(actionType))
+        {
+			final List<String> typeBans = bans.get(actionType);
+			typeBans.remove(configString.toLowerCase());
+			config.set("Bans." + actionType.name(), typeBans);
         }
+        else
+        {
+            // Should never reach here if all enum cases covered
+            ItemRestrict.logger.log(Level.WARNING, "Unknown ActionType detected: {0}", actionType.toString());
+            return;
+        }
+
         plugin.saveConfig();
         sender.sendMessage("Item Unbanned");
     }

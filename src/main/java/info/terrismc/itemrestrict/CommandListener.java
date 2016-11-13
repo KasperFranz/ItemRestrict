@@ -45,19 +45,13 @@ public class CommandListener implements CommandExecutor {
     }
 
     private ActionType getActionType(String actionTypeString) {
-        // Select proper string
-        switch (actionTypeString.toLowerCase()) {
-            case "usage":
-                return ActionType.Usage;
-            case "equip":
-                return ActionType.Equip;
-            case "crafting":
-                return ActionType.Crafting;
-            case "ownership":
-                return ActionType.Ownership;
-            case "world":
-                return ActionType.World;
-        }
-        return null;
+    	for(final ActionType type : ActionType.values())
+    	{
+    		if(type.name().compareToIgnoreCase(actionTypeString) == 0)
+    		{
+    			return type;
+    		}
+    	}
+    	return null;
     }
 }
