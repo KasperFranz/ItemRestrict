@@ -404,7 +404,7 @@ public class ConfigStore {
     				try
     				{
     					id = Integer.parseInt(value.substring(0, dashIndex));
-    					data = Integer.parseInt(value.substring(dashIndex));
+    					data = Integer.parseInt(value.substring(dashIndex + 1));
     				}
     				catch(final NumberFormatException e)
     				{
