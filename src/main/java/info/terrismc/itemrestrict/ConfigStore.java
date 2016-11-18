@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 
+import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.command.CommandSender;
@@ -371,6 +372,78 @@ public class ConfigStore {
 
         plugin.saveConfig();
         sender.sendMessage("Item Unbanned");
+    }
+
+    /** \brief Converts eventual ids stored in the banlists to their material type */
+    public void convert()
+    {
+    	for(final List<String> banList : bans.values())
+    	{
+    		final int banCount = banList.size();
+    		for(int i = 0; i < banCount; ++i)
+    		{
+    			final String value = banList.get(i);
+    			final int dashIndex = value.indexOf('-');
+
+    			int id = -1;
+    			int data = -1;
+    			if(dashIndex == -1)  // no data value, eg. >>pink<< wool
+    			{
+    				try
+    				{
+    					id = Integer.parseInt(value);
+    				}
+    				catch(final NumberFormatException e)
+    				{
+    					ItemRestrict.logger.log(Level.WARNING, "Skip item: " + value);
+    					continue;
+    				}
+    			}
+    			else
+    			{
+    				try
+    				{
+    					id = Integer.parseInt(value.substring(0, dashIndex));
+    					data = Integer.parseInt(value.substring(dashIndex + 1));
+    				}
+    				catch(final NumberFormatException e)
+    				{
+    					ItemRestrict.logger.log(Level.WARNING, "Skip item: " + value);
+    					continue;
+    				}
+    			}
+
+
+				final Material material = Material.getMaterial(id);
+				if(material != null)
+				{
+					if(data >= 0)
+					{
+						banList.set(i, material.name().toLowerCase() + '-' + data);
+					}
+					else
+					{
+						banList.set(i, material.name().toLowerCase());
+					}
+				}
+				else
+				{
+					ItemRestrict.logger.log(Level.WARNING, "Material not found for id: " + value);
+					continue;
+				}
+    		}
+    	}
+    	saveBans();
+    }
+
+    /** \brief saves the bans to the configfile */
+    public void saveBans()
+    {
+    	for(final ActionType actionType : bans.keySet())
+    	{
+    		config.set("Bans." + actionType.name(), bans.get(actionType));
+    	}
+    	plugin.saveConfig();
     }
 
     public void getInformationInHand(CommandSender sender) {
