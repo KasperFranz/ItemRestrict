@@ -10,6 +10,7 @@ import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -377,48 +378,23 @@ public class ConfigStore {
     /** \brief Converts eventual ids stored in the banlists to their material type */
     public void convert()
     {
+    	convertSection(config.getConfigurationSection("Messages.reasons"));
+    	convertSection(config.getConfigurationSection("Messages.labels"));
+
+    	// convert the bans
     	for(final List<String> banList : bans.values())
     	{
     		final int banCount = banList.size();
     		for(int i = 0; i < banCount; ++i)
     		{
     			final String value = banList.get(i);
-    			final int dashIndex = value.indexOf('-');
+    			final Material material = getMaterialForString(value);
+    			final int data = getDataForString(value);
 
-    			int id = -1;
-    			int data = -1;
-    			if(dashIndex == -1)  // no data value, eg. >>pink<< wool
+    			if(data >= 0 && material != null)
     			{
-    				try
+    				if(data > 0)
     				{
-    					id = Integer.parseInt(value);
-    				}
-    				catch(final NumberFormatException e)
-    				{
-    					ItemRestrict.logger.log(Level.WARNING, "Skip item: " + value);
-    					continue;
-    				}
-    			}
-    			else
-    			{
-    				try
-    				{
-    					id = Integer.parseInt(value.substring(0, dashIndex));
-    					data = Integer.parseInt(value.substring(dashIndex + 1));
-    				}
-    				catch(final NumberFormatException e)
-    				{
-    					ItemRestrict.logger.log(Level.WARNING, "Skip item: " + value);
-    					continue;
-    				}
-    			}
-
-
-				final Material material = Material.getMaterial(id);
-				if(material != null)
-				{
-					if(data >= 0)
-					{
 						banList.set(i, material.name().toLowerCase() + '-' + data);
 					}
 					else
@@ -426,14 +402,95 @@ public class ConfigStore {
 						banList.set(i, material.name().toLowerCase());
 					}
 				}
-				else
-				{
-					ItemRestrict.logger.log(Level.WARNING, "Material not found for id: " + value);
-					continue;
-				}
     		}
     	}
     	saveBans();
+    }
+
+    /** \brief converts the keys as ids in a section to materialname + id */
+    private void convertSection(final ConfigurationSection section)
+    {
+    	if(section != null)
+    	{
+    		for(final String key : section.getKeys(false))
+    		{
+    			final Material material = getMaterialForString(key);
+    			final int data = getDataForString(key);
+
+    			final String value = section.getString(key);
+
+    			// set new value with materialname
+    			if(material != null && data >= 0)
+    			{
+    				if(data > 0)
+    				{
+    					section.set(material.name().toLowerCase() + '-' + data, value);
+    				}
+    				else
+    				{
+    					section.set(material.name().toLowerCase(), value);
+    				}
+    				// clear old value
+    				section.set(key, null);
+    			}
+    		}
+    	}
+    }
+
+    /** @return Material for an id or null if no material was found */
+    private Material getMaterialForString(final String value)
+    {
+		final int dashIndex = value.indexOf('-');
+
+		int id = -1;
+		if(dashIndex == -1)  // no data value, e.g. >>pink<< wool
+		{
+			try
+			{
+				id = Integer.parseInt(value);
+			}
+			catch(final NumberFormatException e)
+			{
+				ItemRestrict.logger.log(Level.WARNING, "Skipping: " + value);
+				return null;
+			}
+		}
+		else
+		{
+			try
+			{
+				id = Integer.parseInt(value.substring(0, dashIndex));
+			}
+			catch(final NumberFormatException e)
+			{
+				ItemRestrict.logger.log(Level.WARNING, "Skipping: " + value);
+				return null;
+			}
+		}
+
+		return Material.getMaterial(id);
+    }
+
+    private int getDataForString(final String value)
+    {
+    	final int dashIndex = value.indexOf('-');
+
+    	if(dashIndex == -1)  // no data value, e.g. >>pink<< wool
+    	{
+    		return -1;
+    	}
+    	else
+    	{
+    		try
+    		{
+    			return Integer.parseInt(value.substring(dashIndex + 1));
+    		}
+    		catch(final NumberFormatException e)
+    		{
+    			ItemRestrict.logger.log(Level.WARNING, "Skipping: " + value);
+    			return -1;
+    		}
+    	}
     }
 
     /** \brief saves the bans to the configfile */
