@@ -40,6 +40,14 @@ public class CommandListener implements CommandExecutor {
                     cStore.removeBan(sender, getActionType(args[1]), args[2]);
                     return true;
                 }
+            case "convert":
+            	if(args.length > 1)
+            	{
+            		sender.sendMessage("This command has no parameters :");
+            	}
+            	cStore.convert();
+            	sender.sendMessage("Converted");
+            	return true;
         }
         return false;
     }

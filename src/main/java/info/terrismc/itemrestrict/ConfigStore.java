@@ -6,9 +6,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 
+import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -371,6 +373,134 @@ public class ConfigStore {
 
         plugin.saveConfig();
         sender.sendMessage("Item Unbanned");
+    }
+
+    /** \brief Converts eventual ids stored in the banlists to their material type */
+    public void convert()
+    {
+    	convertSection(config.getConfigurationSection("Messages.reasons"));
+    	convertSection(config.getConfigurationSection("Messages.labels"));
+
+    	// convert the bans
+    	for(final List<String> banList : bans.values())
+    	{
+    		final int banCount = banList.size();
+    		for(int i = 0; i < banCount; ++i)
+    		{
+    			final String value = banList.get(i);
+    			final Material material = getMaterialForString(value);
+    			final int data = getDataForString(value);
+
+    			if(data >= 0 && material != null)
+    			{
+    				if(data > 0)
+    				{
+						banList.set(i, material.name().toLowerCase() + '-' + data);
+					}
+					else
+					{
+						banList.set(i, material.name().toLowerCase());
+					}
+				}
+    		}
+    	}
+    	saveBans();
+    }
+
+    /** \brief converts the keys as ids in a section to materialname + id */
+    private void convertSection(final ConfigurationSection section)
+    {
+    	if(section != null)
+    	{
+    		for(final String key : section.getKeys(false))
+    		{
+    			final Material material = getMaterialForString(key);
+    			final int data = getDataForString(key);
+
+    			final String value = section.getString(key);
+
+    			// set new value with materialname
+    			if(material != null && data >= 0)
+    			{
+    				if(data > 0)
+    				{
+    					section.set(material.name().toLowerCase() + '-' + data, value);
+    				}
+    				else
+    				{
+    					section.set(material.name().toLowerCase(), value);
+    				}
+    				// clear old value
+    				section.set(key, null);
+    			}
+    		}
+    	}
+    }
+
+    /** @return Material for an id or null if no material was found */
+    private Material getMaterialForString(final String value)
+    {
+		final int dashIndex = value.indexOf('-');
+
+		int id = -1;
+		if(dashIndex == -1)  // no data value, e.g. >>pink<< wool
+		{
+			try
+			{
+				id = Integer.parseInt(value);
+			}
+			catch(final NumberFormatException e)
+			{
+				ItemRestrict.logger.log(Level.WARNING, "Skipping: " + value);
+				return null;
+			}
+		}
+		else
+		{
+			try
+			{
+				id = Integer.parseInt(value.substring(0, dashIndex));
+			}
+			catch(final NumberFormatException e)
+			{
+				ItemRestrict.logger.log(Level.WARNING, "Skipping: " + value);
+				return null;
+			}
+		}
+
+		return Material.getMaterial(id);
+    }
+
+    private int getDataForString(final String value)
+    {
+    	final int dashIndex = value.indexOf('-');
+
+    	if(dashIndex == -1)  // no data value, e.g. >>pink<< wool
+    	{
+    		return -1;
+    	}
+    	else
+    	{
+    		try
+    		{
+    			return Integer.parseInt(value.substring(dashIndex + 1));
+    		}
+    		catch(final NumberFormatException e)
+    		{
+    			ItemRestrict.logger.log(Level.WARNING, "Skipping: " + value);
+    			return -1;
+    		}
+    	}
+    }
+
+    /** \brief saves the bans to the configfile */
+    public void saveBans()
+    {
+    	for(final ActionType actionType : bans.keySet())
+    	{
+    		config.set("Bans." + actionType.name(), bans.get(actionType));
+    	}
+    	plugin.saveConfig();
     }
 
     public void getInformationInHand(CommandSender sender) {
