@@ -11,7 +11,6 @@ commands:
       /ires reload - reload config file
       /ires ban <banType> <id-datavalue> - Add item to ban list
       /ires unban <banType> <id-datavalue> - Remove item from ban list
-      /ires convert - converts itemids to materialnames
     permission: itemrestrict.help
   ires reload:
     description: Reloads the config files
@@ -29,10 +28,6 @@ commands:
     description: get the name of the item in  your hand.
     usage: /ires hand
     permission: itemrestrict.hand
-  ires convert:
-    description: converts all itemids in the config to materialnames (new used format) and saves the config
-    usage: /ires convert
-    permission: itemrestrict.convert
 permissions:
   itemrestrict.*:
     description: Grants all administrative privileges.
@@ -45,7 +40,6 @@ permissions:
       itemrestrict.reload: true
       itemrestrict.ban: true
       itemrestrict.hand: true
-      itemrestrict.convert: true
   itemrestrict.help:
       description: Grants permission to access help root
       default: op
@@ -57,7 +51,4 @@ permissions:
       default: op
   itemrestrict.hand:
       description: Grants permission to give information about whats in your hand.
-      default: op
-  itemrestrict.convert:
-      description: Grants permission to convert old itemids to materialnames
       default: op
